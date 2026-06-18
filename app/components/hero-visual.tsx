@@ -1,4 +1,4 @@
-import { CheckCircle2, Globe } from "lucide-react";
+import { CheckCircle2, Sparkles } from "lucide-react";
 
 /**
  * Decorative hero visual: a glowing code-editor window with floating status
@@ -20,10 +20,10 @@ export function HeroVisual() {
           <span className="h-3 w-3 rounded-full bg-[oklch(0.78_0.13_85)]" />
           <span className="h-3 w-3 rounded-full bg-[oklch(0.72_0.16_150)]" />
           <span className="ml-2 font-mono text-xs text-muted-foreground">
-            sims-digital.ts
+            next-chapter.ts
           </span>
           <span className="ml-auto rounded bg-primary/15 px-1.5 py-0.5 font-mono text-[10px] font-medium text-primary ring-1 ring-primary/30">
-            TS
+            MPS-AI
           </span>
         </div>
 
@@ -31,38 +31,43 @@ export function HeroVisual() {
         <pre className="overflow-x-auto p-5 font-mono text-[13px] leading-relaxed">
           <code>
             <span className="text-muted-foreground">
-              {"// what I build for you"}
+              {"// building, learning, growing"}
             </span>
             {"\n"}
             <span className="text-primary">const</span>{" "}
-            <span className="text-foreground">partner</span>
+            <span className="text-foreground">profile</span>
             <span className="text-muted-foreground"> = {"{"}</span>
             {"\n"}
-            <span className="text-muted-foreground"> name</span>
+            <span className="text-muted-foreground">{"  "}name</span>
             <span className="text-muted-foreground">: </span>
             <span className="text-tech-cyan">"Cody Sims"</span>
             <span className="text-muted-foreground">,</span>
             {"\n"}
-            <span className="text-muted-foreground"> focus</span>
+            <span className="text-muted-foreground">{"  "}role</span>
+            <span className="text-muted-foreground">: </span>
+            <span className="text-tech-cyan">"Software Support Engineer"</span>
+            <span className="text-muted-foreground">,</span>
+            {"\n"}
+            <span className="text-muted-foreground">{"  "}focus</span>
             <span className="text-muted-foreground">: [</span>
             {"\n"}
-            <span className="text-tech-cyan"> "websites"</span>
+            <span className="text-tech-cyan">{"    "}"websites"</span>
             <span className="text-muted-foreground">,</span>
             {"\n"}
-            <span className="text-tech-cyan"> "business apps"</span>
+            <span className="text-tech-cyan">{"    "}"software"</span>
             <span className="text-muted-foreground">,</span>
             {"\n"}
-            <span className="text-tech-cyan"> "automation"</span>
+            <span className="text-tech-cyan">{"    "}"automation"</span>
             <span className="text-muted-foreground">,</span>
             {"\n"}
-            <span className="text-tech-cyan"> "ai tools"</span>
+            <span className="text-tech-cyan">{"    "}"ai systems"</span>
             <span className="text-muted-foreground">,</span>
             {"\n"}
-            <span className="text-muted-foreground"> ],</span>
+            <span className="text-muted-foreground">{"  "}],</span>
             {"\n"}
-            <span className="text-muted-foreground"> available</span>
+            <span className="text-muted-foreground">{"  "}status</span>
             <span className="text-muted-foreground">: </span>
-            <span className="text-accent-blue">true</span>
+            <span className="text-tech-cyan">"building"</span>
             <span className="text-muted-foreground">,</span>
             {"\n"}
             <span className="text-muted-foreground">{"}"}</span>
@@ -77,7 +82,7 @@ export function HeroVisual() {
       >
         <CheckCircle2 className="size-4 text-[oklch(0.72_0.16_150)]" />
         <span className="text-xs font-medium text-foreground">
-          Shipped &amp; deployed
+          Shipped &amp; Deployed
         </span>
       </div>
 
@@ -86,9 +91,9 @@ export function HeroVisual() {
         className="animate-float absolute -bottom-5 -left-4 flex items-center gap-2 rounded-lg border border-border bg-card/90 px-3 py-2 shadow-xl backdrop-blur-xl"
         style={{ animationDelay: "0.6s" }}
       >
-        <Globe className="size-4 text-primary" />
+        <Sparkles className="size-4 text-primary" />
         <span className="text-xs font-medium text-foreground">
-          Remote-friendly
+          Continuous Improvement
         </span>
       </div>
     </div>

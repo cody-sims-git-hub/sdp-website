@@ -1,4 +1,12 @@
-import { Award, FileText, GraduationCap, Shield, Sparkles } from "lucide-react";
+import {
+  Award,
+  Briefcase,
+  ExternalLink,
+  FileText,
+  GraduationCap,
+  Shield,
+  Sparkles,
+} from "lucide-react";
 import type { Route } from "./+types/resume";
 import { Button } from "~/components/ui/button";
 import { PageHeader } from "~/components/page-header";
@@ -15,13 +23,38 @@ export function meta({}: Route.MetaArgs) {
 }
 
 const summary =
-  "Recent graduate with a B.S. in Information and Cybersecurity Operations and an NVIDIA certification in Building Agentic AI Applications with Large Language Models. Accepted to Georgetown University's M.P.S. in Artificial Intelligence Management (expected 2027). Hands-on experience building AI-powered applications and working across cloud, cybersecurity, DevSecOps, automation, and modern software development — combining military leadership and business-ownership experience into a disciplined, analytical approach to solving complex problems.";
+  "Recent graduate with a B.S. in Information and Cybersecurity Operations and an NVIDIA certification in building applications powered by large language models. Accepted to Georgetown University's M.P.S. in Artificial Intelligence Management (expected 2027). Hands-on experience building AI-powered applications and working across cloud, cybersecurity, DevSecOps, automation, and modern software development — combining military leadership and business-ownership experience into a disciplined, analytical approach to solving complex problems.";
 
 const highlights = [
   "B.S. Information & Cybersecurity Operations",
-  "NVIDIA Agentic AI Certification",
+  "Graduated Cum Laude",
+  "NVIDIA LLM Application Development",
   "Georgetown M.P.S. AI Management (2027)",
   "U.S. Marine Corps veteran",
+];
+
+const experience = [
+  {
+    role: "Software Support Engineer",
+    company: "Preferred Data Corporation · High Point, NC",
+    period: "Jun 2026 – Present",
+    summary:
+      "Read, debug, extend, and maintain custom software supporting customer business operations — investigating issues through code analysis and SQL/database troubleshooting, resolving support tickets, and building scripts and automations to improve reliability and efficiency.",
+  },
+  {
+    role: "Owner / Independent Insurance Agent",
+    company: "Sims Insurance Partners LLC · Kernersville, NC",
+    period: "Sep 2025 – Present",
+    summary:
+      "Operate an independent insurance business serving senior clients with life insurance and Medicare solutions — managing client relationships, operations, and compliance end to end.",
+  },
+  {
+    role: "Licensed Independent Insurance Agent",
+    company: "The Assurance Group · Archdale, NC",
+    period: "Jun 2020 – Sep 2025",
+    summary:
+      "Built and managed a client base of 600+ through direct outreach, referrals, and educational seminars, earning Chairman's Club recognition for top production.",
+  },
 ];
 
 const education = [
@@ -32,16 +65,19 @@ const education = [
     points: [
       "Accepted to Georgetown's Master of Professional Studies in AI Management.",
     ],
+    link: null,
   },
   {
     credential: "B.S., Information and Cybersecurity Operations",
     school: "ECPI University · Greensboro, NC",
     period: "2019 – 2026",
     points: [
+      "Graduated Cum Laude.",
       "Cybersecurity operations, network infrastructure, systems administration, and cloud security.",
       "Hands-on labs in ethical hacking, vulnerability assessment, incident response, and digital forensics.",
       "Applied AI/ML, cloud technologies, and DevSecOps across academic technical labs.",
     ],
+    link: "/ecpi-diploma.pdf",
   },
 ];
 
@@ -61,6 +97,7 @@ const military = {
     "Expert Rifle Badge",
     "Expert Pistol Badge",
   ],
+  link: "/usmc-corporal-promotion.pdf",
 };
 
 const credentials = [
@@ -69,7 +106,8 @@ const credentials = [
     issuer: "NVIDIA",
     period: "2025",
     detail:
-      "Building agentic AI applications using LLM workflows, orchestration concepts, and modern AI development practices.",
+      "Building practical applications powered by large language models — LLM workflows, orchestration concepts, and modern AI development practices.",
+    link: "/nvidia-agentic-ai-certificate.pdf",
   },
   {
     title: "Dean's List",
@@ -77,6 +115,7 @@ const credentials = [
     period: "2025",
     detail:
       "Recognized for exceptional academic achievement (May–September 2025).",
+    link: "/deans-list-certificate.pdf",
   },
 ];
 
@@ -101,7 +140,7 @@ export default function Resume() {
       <PageHeader
         eyebrow="Resume"
         title="Cody Sims"
-        description="Software developer — AI applications, automation, cloud, and cybersecurity."
+        description="Software Support Engineer, Developer, and AI Management Graduate Student."
         action={
           <Button asChild variant="outline">
             <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">
@@ -133,6 +172,30 @@ export default function Resume() {
           </div>
         </section>
 
+        {/* Work experience */}
+        <section>
+          <SectionLabel icon={Briefcase}>Work experience</SectionLabel>
+          <div className="mt-5 space-y-4">
+            {experience.map((item) => (
+              <div
+                key={item.company}
+                className="rounded-xl border border-border bg-card/60 backdrop-blur-sm p-6"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h3 className="font-medium text-foreground">{item.role}</h3>
+                  <span className="font-mono text-sm text-muted-foreground">
+                    {item.period}
+                  </span>
+                </div>
+                <p className="mt-1 text-sm text-primary">{item.company}</p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  {item.summary}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Education */}
         <section>
           <SectionLabel icon={GraduationCap}>Education</SectionLabel>
@@ -156,6 +219,16 @@ export default function Resume() {
                     <li key={point}>{point}</li>
                   ))}
                 </ul>
+                {item.link && (
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                  >
+                    <ExternalLink className="size-4" /> View diploma
+                  </a>
+                )}
               </div>
             ))}
           </div>
@@ -186,6 +259,16 @@ export default function Resume() {
                 </span>
               ))}
             </div>
+            {military.link && (
+              <a
+                href={military.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+              >
+                <ExternalLink className="size-4" /> View promotion warrant
+              </a>
+            )}
           </div>
         </section>
 
@@ -212,6 +295,16 @@ export default function Resume() {
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {item.detail}
                 </p>
+                {item.link && (
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                  >
+                    <ExternalLink className="size-4" /> View certificate
+                  </a>
+                )}
               </div>
             ))}
           </div>

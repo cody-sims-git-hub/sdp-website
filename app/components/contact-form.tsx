@@ -25,7 +25,7 @@ export function ContactForm({ email, className }: ContactFormProps) {
   // (e.g. Formspree) by setting <form action> and method="POST".
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const subject = form.subject || `Project inquiry from ${form.name}`;
+    const subject = form.subject || `Message from ${form.name}`;
     const body = `Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`;
     window.location.href = `mailto:${email}?subject=${encodeURIComponent(
       subject,
@@ -79,7 +79,7 @@ export function ContactForm({ email, className }: ContactFormProps) {
           name="subject"
           value={form.subject}
           onChange={update("subject")}
-          placeholder="What can I help with?"
+          placeholder="What's this about?"
         />
       </div>
 
@@ -92,7 +92,7 @@ export function ContactForm({ email, className }: ContactFormProps) {
           rows={6}
           value={form.message}
           onChange={update("message")}
-          placeholder="Tell me a bit about your project, timeline, and goals."
+          placeholder="Share a bit about your project or why you're reaching out."
         />
       </div>
 

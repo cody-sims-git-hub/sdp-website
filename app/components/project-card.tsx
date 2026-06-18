@@ -1,5 +1,6 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { cn } from "~/lib/utils";
+import { GithubIcon } from "~/components/icons";
 import {
   Card,
   CardContent,
@@ -8,18 +9,30 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
+export interface ProjectLink {
+  label: string;
+  href: string;
+  kind: "github" | "demo" | "details";
+}
+
 export interface Project {
   title: string;
   category: string;
   description: string;
   tags: string[];
-  link?: string | null;
+  links?: ProjectLink[];
 }
 
 interface ProjectCardProps {
   project: Project;
   className?: string;
 }
+
+const linkIcon = {
+  github: GithubIcon,
+  demo: ExternalLink,
+  details: ArrowUpRight,
+};
 
 export function ProjectCard({ project, className }: ProjectCardProps) {
   return (
@@ -50,16 +63,23 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
           ))}
         </div>
       </CardContent>
-      {project.link && (
-        <CardFooter>
-          <a
-            href={project.link}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-          >
-            View project <ArrowUpRight className="size-4" />
-          </a>
+      {project.links && project.links.length > 0 && (
+        <CardFooter className="flex flex-wrap gap-2">
+          {project.links.map((link) => {
+            const Icon = linkIcon[link.kind];
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+              >
+                <Icon className="size-3.5" />
+                {link.label}
+              </a>
+            );
+          })}
         </CardFooter>
       )}
     </Card>
