@@ -10,6 +10,13 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
+// Google Analytics 4. Measurement IDs are public (shipped to the client), so
+// this is not a secret. Loaded in production builds only. Per-route page views
+// for this SPA are handled by GA4 Enhanced Measurement ("page changes based on
+// browser history events"), which tracks React Router's history navigations —
+// no manual tracking, which keeps it to exactly one page_view per route.
+const GA_ID = "G-LDP3LQPKCT";
+
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.ico?v=2", sizes: "any" },
   { rel: "icon", type: "image/png", sizes: "32x32", href: "/images/sdp-icon-32.png?v=2" },
@@ -35,6 +42,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        {import.meta.env.PROD && (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+            />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`,
+              }}
+            />
+          </>
+        )}
       </head>
       <body>
         {children}
