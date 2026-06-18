@@ -32,7 +32,10 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           # React Router v7 emits the static site to build/client (not dist/)
           local-dir: ./build/client/
-          server-dir: /public_html/
+          # The FTP account is rooted at the site's web root, so upload to the
+          # login directory itself ("./"), not /public_html/ (which would nest
+          # into public_html/public_html/ and never be served).
+          server-dir: ./
           # No dangerous-clean-slate: the recursive pre-delete over FTP times
           # out the control socket on a populated dir. The action's sync-state
           # uploads only changed files instead.
