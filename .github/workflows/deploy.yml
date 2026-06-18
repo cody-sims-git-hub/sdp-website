@@ -36,4 +36,7 @@ jobs:
           # No dangerous-clean-slate: the recursive pre-delete over FTP times
           # out the control socket on a populated dir. The action's sync-state
           # uploads only changed files instead.
-          timeout: 60000
+          # Fresh state-name forces a full re-publish of every file once, to
+          # recover from a stale/incorrect prior sync state.
+          state-name: .sdp-deploy-state.json
+          timeout: 120000
