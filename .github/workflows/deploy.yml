@@ -33,4 +33,7 @@ jobs:
           # React Router v7 emits the static site to build/client (not dist/)
           local-dir: ./build/client/
           server-dir: /public_html/
-          dangerous-clean-slate: true
+          # No dangerous-clean-slate: the recursive pre-delete over FTP times
+          # out the control socket on a populated dir. The action's sync-state
+          # uploads only changed files instead.
+          timeout: 60000
