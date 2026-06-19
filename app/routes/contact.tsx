@@ -3,16 +3,15 @@ import type { Route } from "./+types/contact";
 import { PageHeader } from "~/components/page-header";
 import { ContactForm } from "~/components/contact-form";
 import { GithubIcon, LinkedinIcon } from "~/components/icons";
+import { siteMeta } from "~/lib/site-meta";
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Contact — Sims Digital Partners" },
-    {
-      name: "description",
-      content:
-        "Get in touch with Cody Sims — about a website, application, or automation project, an opportunity, or to connect professionally.",
-    },
-  ];
+  return siteMeta({
+    title: "Contact — Sims Digital Partners",
+    description:
+      "Get in touch with Cody Sims — about a website, application, or automation project, an opportunity, or to connect professionally.",
+    path: "/contact",
+  });
 }
 
 const CONTACT_EMAIL = "info@simsdigitalpartners.com";

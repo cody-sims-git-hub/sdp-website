@@ -14,16 +14,15 @@ import { HeroVisual } from "~/components/hero-visual";
 import { TechMarquee } from "~/components/tech-marquee";
 import { ProjectCard, type Project } from "~/components/project-card";
 import { GithubIcon } from "~/components/icons";
+import { siteMeta } from "~/lib/site-meta";
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Sims Digital Partners — Cody Sims, software developer" },
-    {
-      name: "description",
-      content:
-        "Cody Sims — software support engineer and developer. Application development, system integration, automation, and technical support, built on practical, dependable engineering.",
-    },
-  ];
+  return siteMeta({
+    title: "Sims Digital Partners — Cody Sims, software developer",
+    description:
+      "Cody Sims — software support engineer and developer. Application development, system integration, automation, and technical support, built on practical, dependable engineering.",
+    path: "/",
+  });
 }
 
 interface Capability {

@@ -10,16 +10,15 @@ import {
 import type { Route } from "./+types/resume";
 import { Button } from "~/components/ui/button";
 import { PageHeader } from "~/components/page-header";
+import { siteMeta } from "~/lib/site-meta";
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Resume — Sims Digital Partners" },
-    {
-      name: "description",
-      content:
-        "Resume for Cody Sims — software developer focused on AI applications, automation, cloud, and cybersecurity.",
-    },
-  ];
+  return siteMeta({
+    title: "Resume — Sims Digital Partners",
+    description:
+      "Résumé for Cody Sims — software support engineer and developer, U.S. Marine Corps veteran, and incoming Georgetown M.P.S. in Artificial Intelligence Management.",
+    path: "/resume",
+  });
 }
 
 const summary =

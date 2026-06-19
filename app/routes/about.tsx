@@ -3,16 +3,15 @@ import { ArrowRight, FileText } from "lucide-react";
 import type { Route } from "./+types/about";
 import { Button } from "~/components/ui/button";
 import { PageHeader } from "~/components/page-header";
+import { siteMeta } from "~/lib/site-meta";
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "About — Sims Digital Partners" },
-    {
-      name: "description",
-      content:
-        "About Cody Sims — a software support engineer and developer with a background in business ownership and U.S. Marine Corps service, beginning a Master's in AI Management at Georgetown.",
-    },
-  ];
+  return siteMeta({
+    title: "About — Sims Digital Partners",
+    description:
+      "About Cody Sims — a software support engineer and developer with a background in business ownership and U.S. Marine Corps service, beginning a Master's in AI Management at Georgetown.",
+    path: "/about",
+  });
 }
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
