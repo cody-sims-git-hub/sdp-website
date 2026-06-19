@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -43,17 +44,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
         {import.meta.env.PROD && (
-          <>
-            <script
-              async
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-            />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`,
-              }}
-            />
-          </>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`,
+            }}
+          />
         )}
       </head>
       <body>
@@ -66,6 +61,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  // Load Google Analytics off the critical render path: inject gtag.js once the
+  // page is idle so it never competes with hero content for bandwidth/CPU. The
+  // inline config in <head> queues events until the script arrives.
+  useEffect(() => {
+    if (!import.meta.env.PROD) return;
+    const inject = () => {
+      const s = document.createElement("script");
+      s.async = true;
+      s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+      document.head.appendChild(s);
+    };
+    if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(inject, { timeout: 5000 });
+    } else {
+      window.setTimeout(inject, 3000);
+    }
+  }, []);
+
   return <Outlet />;
 }
 
