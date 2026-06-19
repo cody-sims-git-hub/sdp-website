@@ -5,6 +5,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Label } from "~/components/ui/label";
+import { gtagEvent } from "~/lib/analytics";
 
 interface ContactFormProps {
   /** Destination address for the composed message. */
@@ -25,6 +26,7 @@ export function ContactForm({ email, className }: ContactFormProps) {
   // (e.g. Formspree) by setting <form action> and method="POST".
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    gtagEvent("contact_submit", { method: "contact_form" });
     const subject = form.subject || `Message from ${form.name}`;
     const body = `Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`;
     window.location.href = `mailto:${email}?subject=${encodeURIComponent(

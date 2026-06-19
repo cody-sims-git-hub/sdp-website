@@ -10,6 +10,7 @@ import {
 
 import type { Route } from "./+types/root";
 import { Button } from "~/components/ui/button";
+import { initClickTracking } from "~/lib/analytics";
 import "./app.css";
 
 // Google Analytics 4. Measurement IDs are public (shipped to the client), so
@@ -18,6 +19,8 @@ import "./app.css";
 // browser history events"), which tracks React Router's history navigations —
 // no manual tracking, which keeps it to exactly one page_view per route.
 const GA_ID = "G-LDP3LQPKCT";
+// Microsoft Clarity project ID — heatmaps + session recordings.
+const CLARITY_ID = "x9nwbcid1q";
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.ico?v=2", sizes: "any" },
@@ -45,13 +48,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="theme-color" content="#0b101e" />
         <Meta />
         <Links />
-        {import.meta.env.PROD && (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`,
-            }}
-          />
-        )}
       </head>
       <body>
         {children}
@@ -63,22 +59,47 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  // Load Google Analytics off the critical render path: inject gtag.js once the
-  // page is idle so it never competes with hero content for bandwidth/CPU. The
-  // inline config in <head> queues events until the script arrives.
+  // Analytics load entirely off the critical path — nothing runs during HTML
+  // parse or hydration. Production only; after the page is idle (post-LCP) we
+  // bootstrap gtag and inject GA + Clarity (both async), so they never compete
+  // with rendering/hydration for CPU or bandwidth.
   useEffect(() => {
     if (!import.meta.env.PROD) return;
+    // Attach the click tracker now (cheap, runs after hydration). It no-ops
+    // until gtag is defined by the idle inject below, so it blocks nothing.
+    const stopTracking = initClickTracking();
     const inject = () => {
-      const s = document.createElement("script");
-      s.async = true;
-      s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-      document.head.appendChild(s);
+      // Google Analytics 4 — set up the queue + config, then load gtag.js async
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function gtag() {
+        window.dataLayer!.push(arguments);
+      };
+      window.gtag("js", new Date());
+      window.gtag("config", GA_ID);
+      const ga = document.createElement("script");
+      ga.async = true;
+      ga.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+      document.head.appendChild(ga);
+      // Microsoft Clarity — heatmaps + session recordings (official snippet)
+      (function (c: any, l: Document, a: string, r: "script", i: string) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        const t = l.createElement(r);
+        t.async = true;
+        t.src = "https://www.clarity.ms/tag/" + i;
+        const first = l.getElementsByTagName(r)[0];
+        (first?.parentNode ?? l.head).insertBefore(t, first ?? null);
+      })(window, document, "clarity", "script", CLARITY_ID);
     };
     if (typeof window.requestIdleCallback === "function") {
       window.requestIdleCallback(inject, { timeout: 5000 });
     } else {
       window.setTimeout(inject, 3000);
     }
+    return stopTracking;
   }, []);
 
   return <Outlet />;
