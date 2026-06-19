@@ -5,3 +5,6 @@
 # React Router
 /.react-router/
 /build/
+
+# Local-only working docs
+/.claude/canva-brand-kit.md
