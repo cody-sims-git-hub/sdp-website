@@ -1,6 +1,6 @@
 const SITE_URL = "https://simsdigitalpartners.com";
 const SITE_NAME = "Sims Digital Partners";
-const OG_IMAGE = `${SITE_URL}/images/og-image.png`;
+const OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 interface SiteMetaArgs {
   /** Full <title> for the page. */
@@ -28,8 +28,9 @@ export function siteMeta({ title, description, path = "/" }: SiteMetaArgs) {
     { property: "og:description", content: description },
     { property: "og:url", content: url },
     { property: "og:image", content: OG_IMAGE },
+    { property: "og:image:type", content: "image/jpeg" },
     { property: "og:image:width", content: "1200" },
-    { property: "og:image:height", content: "630" },
+    { property: "og:image:height", content: "610" },
     { property: "og:image:alt", content: SITE_NAME },
 
     { name: "twitter:card", content: "summary_large_image" },
