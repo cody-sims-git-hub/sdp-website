@@ -4,17 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**Sims Digital Partners website** — a modern portfolio/business site presenting Cody Sims as a software developer who builds practical websites, business applications, automations, and AI-assisted tools.
+**Sims Digital Partners website** — a modern business/portfolio site presenting Cody Sims and the practical websites, business applications, automations, and AI-assisted tools he builds for businesses.
 
 **Objectives (the guiding rule for all decisions):**
-1. **Primary — professional portfolio.** First and foremost this is a portfolio that establishes Cody as a credible software developer. When a tradeoff arises, favor what makes the portfolio stronger and more professional.
-2. **Secondary — let visitors get in touch about potential projects.** Make contact easy and obvious, but it supports the portfolio; it does not turn the site into a sales/lead-gen funnel.
+1. **Primary — win potential customers.** First and foremost this site exists to turn visitors into qualified inquiries: make the services clear and compelling and make reaching out about a project easy and obvious. When a tradeoff arises, favor what drives qualified contact.
+2. **Secondary — portfolio credibility.** Establish Cody as a credible software developer so the work and background build the trust that supports conversion.
 
-Keep these in priority order: don't let business-service/CTA elements crowd out or cheapen the portfolio presentation.
+Keep these in priority order: the site's job is to win customers; the portfolio is the credibility that supports it. Stay professional and trustworthy — never hypey or like a lead-gen mill.
 
-**Positioning:** A professional developer portfolio *with* business-service capability — not a large agency, not an aggressive "custom software" shop. Credible, clean, focused.
+**Positioning:** A business site that wins customers, backed by a credible developer portfolio — a one-person studio led by Cody Sims, not a large agency, not an aggressive "custom software" shop. Business-first, but credible, clean, and focused.
 
-**Audience:** Small business owners, potential employers, recruiters, and technical reviewers.
+**Audience:** Small business owners and prospective clients first; potential employers, recruiters, and technical reviewers second.
 
 **Tone:** Professional, direct, modern, practical. No corporate fluff.
 
