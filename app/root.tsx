@@ -9,6 +9,7 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import { Button } from "~/components/ui/button";
 import "./app.css";
 
 // Google Analytics 4. Measurement IDs are public (shipped to the client), so
@@ -84,15 +85,17 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
+  let code = "Error";
+  let message = "Something went wrong";
+  let details = "An unexpected error occurred. Please try again.";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    code = String(error.status);
+    message = error.status === 404 ? "Page not found" : "Something went wrong";
     details =
       error.status === 404
-        ? "The requested page could not be found."
+        ? "The page you're looking for doesn't exist or may have moved."
         : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
@@ -100,11 +103,24 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
+    <main className="relative flex min-h-svh flex-col items-center justify-center px-4 py-20 text-center">
+      <img
+        src="/images/sdp-mark.png"
+        alt="Sims Digital Partners"
+        className="h-10 w-auto"
+      />
+      <p className="mt-8 font-mono text-sm uppercase tracking-[0.2em] text-primary">
+        {code}
+      </p>
+      <h1 className="mt-3 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+        {message}
+      </h1>
+      <p className="mt-4 max-w-md text-muted-foreground">{details}</p>
+      <Button asChild size="lg" className="mt-8">
+        <a href="/">Back to home</a>
+      </Button>
       {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
+        <pre className="mt-10 max-w-full overflow-x-auto rounded-lg border border-border bg-card/60 p-4 text-left text-xs text-muted-foreground">
           <code>{stack}</code>
         </pre>
       )}

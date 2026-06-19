@@ -4,21 +4,25 @@ import type { Route } from "./+types/about";
 import { Button } from "~/components/ui/button";
 import { PageHeader } from "~/components/page-header";
 import { siteMeta } from "~/lib/site-meta";
+import { personJsonLd } from "~/lib/structured-data";
 
 export function meta({}: Route.MetaArgs) {
-  return siteMeta({
-    title: "About — Sims Digital Partners",
-    description:
-      "About Cody Sims — a software support engineer and developer with a background in business ownership and U.S. Marine Corps service, beginning a Master's in AI Management at Georgetown.",
-    path: "/about",
-  });
+  return [
+    ...siteMeta({
+      title: "About — Cody Sims, Founder | Sims Digital Partners",
+      description:
+        "About Cody Sims — a software support engineer and developer with a background in business ownership and U.S. Marine Corps service, beginning a Master's in AI Management at Georgetown.",
+      path: "/about",
+    }),
+    { "script:ld+json": personJsonLd() },
+  ];
 }
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-mono text-xs uppercase tracking-[0.2em] text-primary">
+    <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-primary">
       {children}
-    </p>
+    </h2>
   );
 }
 
@@ -61,8 +65,8 @@ export default function About() {
     <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <PageHeader
         eyebrow="About"
-        title="Cody Sims"
-        description="Software support engineer and developer — with a background in business ownership and military service, focused on building and supporting practical, dependable technology."
+        title="Sims Digital Partners"
+        description="Founded by Cody Sims — a software developer with a background in business ownership and military service, focused on building practical, dependable websites, applications, and automation for businesses."
       />
 
       <div className="mt-16 space-y-20">
@@ -121,26 +125,14 @@ export default function About() {
               src="/images/headshot.JPG"
               alt="Cody Sims"
               loading="lazy"
-              className="aspect-[2/3] w-full object-cover object-top"
+              className="aspect-[4/5] w-full object-cover object-top"
             />
           </div>
         </section>
 
         {/* Section 2 — Service & leadership */}
         <section className="grid items-stretch gap-10 lg:grid-cols-3">
-          <figure className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card/60 backdrop-blur-sm md:mx-auto md:max-w-sm lg:mx-0 lg:max-w-none">
-            <img
-              src="/images/military-photo.JPG"
-              alt="Cody Sims during his service in the United States Marine Corps"
-              loading="lazy"
-              className="aspect-[4/3] w-full object-cover object-left lg:aspect-auto lg:min-h-0 lg:flex-1"
-            />
-            <figcaption className="border-t border-border px-4 py-3 text-xs italic leading-relaxed text-muted-foreground">
-              Manning the rails of the USS Bataan (LHD-5) on the Hudson during
-              Fleet Week — May 26, 2016.
-            </figcaption>
-          </figure>
-          <div className="flex flex-col justify-center space-y-5 lg:col-span-2">
+          <div className="flex flex-col justify-center space-y-5 lg:order-2 lg:col-span-2">
             <Eyebrow>Service &amp; leadership</Eyebrow>
             <div className="space-y-4 text-base leading-relaxed text-muted-foreground">
               <p>
@@ -162,6 +154,18 @@ export default function About() {
               items={["Discipline", "Accountability", "Reliability", "Leadership"]}
             />
           </div>
+          <figure className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card/60 backdrop-blur-sm md:mx-auto md:max-w-sm lg:order-1 lg:mx-0 lg:max-w-none">
+            <img
+              src="/images/military-photo.JPG"
+              alt="Cody Sims during his service in the United States Marine Corps"
+              loading="lazy"
+              className="aspect-[4/3] w-full object-cover object-left lg:aspect-auto lg:min-h-0 lg:flex-1"
+            />
+            <figcaption className="border-t border-border px-4 py-3 text-xs italic leading-relaxed text-muted-foreground">
+              Manning the rails of the USS Bataan (LHD-5) on the Hudson during
+              Fleet Week — May 26, 2016.
+            </figcaption>
+          </figure>
         </section>
 
         {/* Section 3 — A business perspective */}

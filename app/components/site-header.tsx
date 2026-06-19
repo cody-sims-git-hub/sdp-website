@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 
 const navItems = [
   { to: "/", label: "Home", end: true },
+  { to: "/services", label: "Services" },
   { to: "/about", label: "About" },
   { to: "/resume", label: "Resume" },
 ];

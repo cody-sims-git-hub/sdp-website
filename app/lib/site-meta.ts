@@ -21,6 +21,7 @@ export function siteMeta({ title, description, path = "/" }: SiteMetaArgs) {
   return [
     { title },
     { name: "description", content: description },
+    { tagName: "link", rel: "canonical", href: url },
 
     { property: "og:type", content: "website" },
     { property: "og:site_name", content: SITE_NAME },

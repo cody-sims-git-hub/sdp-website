@@ -11,14 +11,18 @@ import type { Route } from "./+types/resume";
 import { Button } from "~/components/ui/button";
 import { PageHeader } from "~/components/page-header";
 import { siteMeta } from "~/lib/site-meta";
+import { personJsonLd } from "~/lib/structured-data";
 
 export function meta({}: Route.MetaArgs) {
-  return siteMeta({
-    title: "Resume — Sims Digital Partners",
-    description:
-      "Résumé for Cody Sims — software support engineer and developer, U.S. Marine Corps veteran, and incoming Georgetown M.P.S. in Artificial Intelligence Management.",
-    path: "/resume",
-  });
+  return [
+    ...siteMeta({
+      title: "Cody Sims Resume | Sims Digital Partners",
+      description:
+        "Résumé for Cody Sims — software support engineer and developer, U.S. Marine Corps veteran, and incoming Georgetown M.P.S. in Artificial Intelligence Management.",
+      path: "/resume",
+    }),
+    { "script:ld+json": personJsonLd() },
+  ];
 }
 
 const summary =

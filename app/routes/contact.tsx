@@ -4,14 +4,18 @@ import { PageHeader } from "~/components/page-header";
 import { ContactForm } from "~/components/contact-form";
 import { GithubIcon, LinkedinIcon } from "~/components/icons";
 import { siteMeta } from "~/lib/site-meta";
+import { contactJsonLd } from "~/lib/structured-data";
 
 export function meta({}: Route.MetaArgs) {
-  return siteMeta({
-    title: "Contact — Sims Digital Partners",
-    description:
-      "Get in touch with Cody Sims — about a website, application, or automation project, an opportunity, or to connect professionally.",
-    path: "/contact",
-  });
+  return [
+    ...siteMeta({
+      title: "Contact | Sims Digital Partners",
+      description:
+        "Get in touch about a website, automation, AI, or custom software project — or just to connect. We'll get back to you.",
+      path: "/contact",
+    }),
+    { "script:ld+json": contactJsonLd() },
+  ];
 }
 
 const CONTACT_EMAIL = "info@simsdigitalpartners.com";
@@ -22,7 +26,7 @@ const reasons = [
   "A website, application, or automation project",
   "Roles and opportunities",
   "Collaboration or partnership",
-  "Questions about my work or background",
+  "Questions about our work or background",
 ];
 
 export default function Contact() {
@@ -31,7 +35,7 @@ export default function Contact() {
       <PageHeader
         eyebrow="Contact"
         title="Let's connect"
-        description="Whether you have a project in mind or you'd just like to connect, I'd be glad to hear from you. Tell me a bit about what you're looking for and I'll get back to you."
+        description="Whether you have a project in mind or you'd just like to connect, we'd be glad to hear from you. Tell us a bit about what you're looking for and we'll get back to you."
       />
 
       <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_320px]">
@@ -39,7 +43,7 @@ export default function Contact() {
 
         <aside className="space-y-4">
           <div className="rounded-2xl border border-border bg-card/60 backdrop-blur-sm p-6">
-            <h2 className="font-medium text-foreground">Reach me directly</h2>
+            <h2 className="font-medium text-foreground">Reach us directly</h2>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
               className="mt-4 flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"

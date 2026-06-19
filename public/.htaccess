@@ -1,0 +1,3 @@
+# Serve the branded 404 page for unknown URLs (direct hits the static host
+# resolves itself, before any client-side routing runs).
+ErrorDocument 404 /404.html

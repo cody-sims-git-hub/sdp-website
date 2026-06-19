@@ -1,67 +1,26 @@
 import { Link } from "react-router";
-import {
-  ArrowRight,
-  Check,
-  Code2,
-  LifeBuoy,
-  Network,
-  Workflow,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import type { Route } from "./+types/home";
 import { Button } from "~/components/ui/button";
 import { HeroVisual } from "~/components/hero-visual";
 import { TechMarquee } from "~/components/tech-marquee";
 import { ProjectCard, type Project } from "~/components/project-card";
 import { GithubIcon } from "~/components/icons";
+import { services, type Service } from "~/lib/services";
 import { siteMeta } from "~/lib/site-meta";
+import { homeJsonLd } from "~/lib/structured-data";
 
 export function meta({}: Route.MetaArgs) {
-  return siteMeta({
-    title: "Sims Digital Partners — Cody Sims, software developer",
-    description:
-      "Cody Sims — software support engineer and developer. Application development, system integration, automation, and technical support, built on practical, dependable engineering.",
-    path: "/",
-  });
+  return [
+    ...siteMeta({
+      title: "Websites, Automation & AI Solutions | Sims Digital Partners",
+      description:
+        "Helping businesses modernize operations through websites, automation, AI integrations, and custom software.",
+      path: "/",
+    }),
+    { "script:ld+json": homeJsonLd() },
+  ];
 }
-
-interface Capability {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  tech: string[];
-}
-
-const capabilities: Capability[] = [
-  {
-    icon: Code2,
-    title: "Application Development",
-    description:
-      "Building applications end to end — data models, APIs, and the interfaces people actually use — with an eye toward keeping them reliable and maintainable.",
-    tech: ["React", "TypeScript", "Laravel", "Python", "REST APIs", "PostgreSQL"],
-  },
-  {
-    icon: Network,
-    title: "System Integration",
-    description:
-      "Connecting systems and services so data moves cleanly between them, replacing manual handoffs with structured, dependable interfaces.",
-    tech: ["REST APIs", "Webhooks", "Auth", "Databases", "Docker"],
-  },
-  {
-    icon: Workflow,
-    title: "Automation",
-    description:
-      "Turning repetitive, error-prone tasks into automated, observable processes so time goes toward more useful work.",
-    tech: ["Python", "Bash", "CI/CD", "GitHub Actions", "Ansible"],
-  },
-  {
-    icon: LifeBuoy,
-    title: "Technical Support & Operations",
-    description:
-      "Troubleshooting issues, supporting the people who rely on software, and helping keep systems healthy with clear logging, monitoring, and follow-through.",
-    tech: ["Debugging", "Logging", "Monitoring", "Linux", "AWS", "Azure"],
-  },
-];
 
 const GITHUB_PROFILE = "https://github.com/cody-sims-git-hub";
 const SENTINEL_VISION_REPO =
@@ -100,13 +59,14 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-function CapabilityBlock({
+function ServiceBlock({
   icon: Icon,
   title,
+  headline,
   description,
-  tech,
+  tags,
   index,
-}: Capability & { index: number }) {
+}: Service & { index: number }) {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card/60 p-6 backdrop-blur-sm transition-colors hover:border-primary/40 sm:p-8">
       <div
@@ -127,11 +87,14 @@ function CapabilityBlock({
             </h3>
           </div>
         </div>
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+        <p className="mt-5 text-balance text-base font-medium leading-snug text-foreground">
+          {headline}
+        </p>
+        <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
           {description}
         </p>
-        <div className="mt-5 flex flex-wrap gap-2 border-t border-border pt-5">
-          {tech.map((t) => (
+        <div className="mt-auto flex flex-wrap gap-2 border-t border-border pt-5">
+          {tags.map((t) => (
             <span
               key={t}
               className="rounded-md bg-muted px-2 py-1 font-mono text-xs text-muted-foreground"
@@ -153,7 +116,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
           <div>
             <div className="animate-fade-up">
-              <Eyebrow>Building practical software &amp; systems</Eyebrow>
+              <Eyebrow>Digital solutions for growing businesses</Eyebrow>
             </div>
             <h1
               className="animate-fade-up mt-6 text-balance text-5xl font-semibold leading-[1.05] tracking-tight text-foreground sm:text-6xl"
@@ -166,10 +129,9 @@ export default function Home() {
               className="animate-fade-up mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground"
               style={{ animationDelay: "0.16s" }}
             >
-              I'm Cody Sims — a software support engineer and developer. I build
-              websites, business applications, workflow automation, and
-              software systems, with a focus on work that's well-made and
-              genuinely useful.
+              Websites, automation, AI integrations, and custom software
+              designed to help businesses work smarter, serve customers better,
+              and scale with confidence.
             </p>
             <div
               className="animate-fade-up mt-8 flex flex-wrap gap-3"
@@ -189,9 +151,9 @@ export default function Home() {
               style={{ animationDelay: "0.32s" }}
             >
               {[
-                "End-to-end ownership",
-                "Reliable, well-built results",
-                "Clear communication",
+                "Websites & Online Presence",
+                "Business Automation",
+                "AI Integration & Workflows",
               ].map((item) => (
                 <li
                   key={item}
@@ -212,22 +174,21 @@ export default function Home() {
 
       <TechMarquee />
 
-      {/* CAPABILITIES */}
+      {/* SERVICES */}
       <section className="mx-auto max-w-6xl px-4 py-24 sm:px-6">
         <div className="max-w-2xl">
-          <Eyebrow>Capabilities</Eyebrow>
+          <Eyebrow>Services</Eyebrow>
           <h2 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Areas of hands-on experience
+            What we build
           </h2>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            The areas where I've spent the most time building, supporting, and
-            learning — through personal projects, professional work, and ongoing
-            study.
+            Helping businesses improve their online presence, automate
+            processes, and solve operational challenges through software and AI.
           </p>
         </div>
-        <div className="mt-12 grid gap-5 lg:grid-cols-2">
-          {capabilities.map((cap, i) => (
-            <CapabilityBlock key={cap.title} index={i + 1} {...cap} />
+        <div className="mt-12 grid gap-5 md:grid-cols-2">
+          {services.map((service, i) => (
+            <ServiceBlock key={service.title} index={i + 1} {...service} />
           ))}
         </div>
       </section>
@@ -243,8 +204,9 @@ export default function Home() {
             Featured projects
           </h2>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            A look at projects I've built, from computer vision to full-stack web
-            applications. Source and live demos are linked where available.
+            A look at projects built by Cody Sims, from computer vision to
+            full-stack web applications. Source and live demos are linked where
+            available.
           </p>
         </div>
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
@@ -262,7 +224,7 @@ export default function Home() {
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Additional software projects, experiments, and research work are
-                actively in development. I'll add them here as they mature.
+                actively in development. We'll add them here as they mature.
               </p>
             </div>
             <Button asChild variant="outline">
@@ -285,19 +247,19 @@ export default function Home() {
             Have a project in mind?
           </h2>
           <p className="relative mx-auto mt-3 max-w-xl text-muted-foreground">
-            I'm available for select website, application, and automation
+            We're available for select website, application, and automation
             projects. Whether you're launching something new, improving an
             existing process, or exploring ways technology can save time and
-            create value, I'd be happy to start a conversation.
+            create value, we'd be happy to start a conversation.
           </p>
           <div className="relative mt-6 flex flex-wrap justify-center gap-3">
             <Button asChild size="lg">
-              <Link to="/contact">
-                Discuss a project <ArrowRight className="size-4" />
+              <Link to="/services">
+                View services <ArrowRight className="size-4" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <a href="mailto:info@simsdigitalpartners.com">Get in touch</a>
+              <Link to="/contact">Get in touch</Link>
             </Button>
           </div>
         </div>
