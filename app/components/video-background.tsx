@@ -17,13 +17,15 @@ interface VideoBackgroundProps {
 }
 
 /**
- * Fixed, full-screen looping video background that sits behind all page
- * content. Muted + playsInline so it autoplays on every browser, with a dark
- * overlay for text contrast. The MP4 loads at the browser's default (low)
- * priority, so it does not compete with the critical render path — the LCP
- * element is the hero text, which paints before the video matters. Respects
- * `prefers-reduced-motion`: hidden via `motion-reduce:hidden` (CSS, works
- * without JS) and paused via a `matchMedia` effect.
+ * Fixed, full-screen looping video background behind all page content.
+ *
+ * The video is deferred: the prerendered HTML ships no source and the element
+ * uses `preload="none"`, so nothing downloads during page load. Once the page
+ * is idle (after the hero/LCP has rendered) the source is attached and playback
+ * starts — so the ~6MB clip never competes with the critical render path. Until
+ * then the fixed `bg-background` shows, which is visually the same as the
+ * already-dark overlaid video. Muted + playsInline so it autoplays everywhere;
+ * `prefers-reduced-motion` skips loading entirely (CSS hides it too).
  */
 export function VideoBackground({
   src = "/videos/background.mp4",
@@ -38,29 +40,48 @@ export function VideoBackground({
     const video = videoRef.current;
     if (!video) return;
 
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (reduce.matches) return; // no motion -> never load the video
+
+    let started = false;
+    const start = () => {
+      if (started) return;
+      started = true;
+      video.src = src; // attach source now (deferred) -> begins loading
+      video.playbackRate = playbackRate;
+      video.play().catch(() => {});
+    };
 
     const applyRate = () => {
       video.playbackRate = playbackRate;
     };
-    applyRate();
     video.addEventListener("loadeddata", applyRate);
 
-    const apply = () => {
-      if (media.matches) {
-        video.pause();
-      } else {
-        video.play().catch(() => {});
-      }
-    };
+    // Defer until the browser is idle (post-LCP) so the video stays off the
+    // critical path. Fallback timer for browsers without requestIdleCallback.
+    let idleId: number | undefined;
+    let timerId: number | undefined;
+    if (typeof window.requestIdleCallback === "function") {
+      idleId = window.requestIdleCallback(start, { timeout: 3000 });
+    } else {
+      timerId = window.setTimeout(start, 1500);
+    }
 
-    apply();
-    media.addEventListener("change", apply);
-    return () => {
-      media.removeEventListener("change", apply);
-      video.removeEventListener("loadeddata", applyRate);
+    const onReduceChange = () => {
+      if (reduce.matches) video.pause();
+      else if (started) video.play().catch(() => {});
     };
-  }, [playbackRate]);
+    reduce.addEventListener("change", onReduceChange);
+
+    return () => {
+      if (idleId !== undefined && typeof window.cancelIdleCallback === "function") {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timerId !== undefined) window.clearTimeout(timerId);
+      video.removeEventListener("loadeddata", applyRate);
+      reduce.removeEventListener("change", onReduceChange);
+    };
+  }, [src, playbackRate]);
 
   return (
     <div
@@ -73,15 +94,12 @@ export function VideoBackground({
       <video
         ref={videoRef}
         className="h-full w-full object-cover motion-reduce:hidden"
-        autoPlay
         loop
         muted
         playsInline
-        preload="auto"
+        preload="none"
         poster={poster}
-      >
-        <source src={src} type="video/mp4" />
-      </video>
+      />
 
       <div
         className={cn("absolute inset-0 bg-background/70", overlayClassName)}
