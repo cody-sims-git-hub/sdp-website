@@ -94,10 +94,10 @@ src/
   index.ts            # app bootstrap, middleware wiring, server start
   routes/
     contact.ts        # POST /contact
-    health.ts         # GET /health  (liveness for Caddy/uptime checks)
+    health.ts         # GET /health → { "status": "ok" } and nothing else
   middleware/
     cors.ts           # allowlist: https://simsdigitalpartners.com + www
-    rate-limit.ts     # per-IP, sliding window
+    rate-limit.ts     # per-IP, 5 submissions / 10 min (conservative start)
     body-limit.ts     # reject oversized payloads early
   lib/
     turnstile.ts      # verify token with Cloudflare siteverify
@@ -119,7 +119,8 @@ Dockerfile            # multi-stage, non-root, pinned base image
 **Request handling order for `POST /contact`:**
 1. CORS preflight / origin check (reject disallowed origins).
 2. Body-size cap (reject early if too large).
-3. Rate limit by client IP (Caddy sets `X-Forwarded-For`; trust it from the proxy).
+3. Rate limit by client IP — **5 submissions per IP per 10 minutes** to start
+   (conservative; tune later). Caddy sets `X-Forwarded-For`; trust it from the proxy.
 4. Honeypot check — if the hidden field is non-empty, return a fake 200 (silently
    drop; don't tip off bots).
 5. Turnstile verification — POST token to Cloudflare siteverify; reject on failure.
@@ -182,7 +183,10 @@ Requested + recommended, all in v1:
 
 - **Cloudflare Turnstile** — bot challenge, verified server-side.
 - **Honeypot** — hidden field; silent drop if filled (defense-in-depth).
-- **Rate limiting** — per-IP sliding window on `POST /contact`.
+- **Rate limiting** — per-IP, **5 submissions / 10 min** on `POST /contact` to start.
+- **Minimal `/health`** — returns only `{ "status": "ok" }`; no DB status, versions,
+  uptime, env values, internal paths, or stack traces. Normal rate limiting and
+  logging still apply.
 - **CORS allowlist** — only `https://simsdigitalpartners.com` and `www`.
 - **Body-size cap** — reject oversized payloads before processing.
 - **Max lengths** — enforced on every field in the validation schema.
@@ -214,15 +218,37 @@ Frontend (this repo, build-time, **public** values only):
 - `VITE_CONTACT_API_URL=https://api.simsdigitalpartners.com`
 - `VITE_TURNSTILE_SITE_KEY=…` (public site key)
 
-## Deployment
+## Dev & deploy workflow
+
+The three environments are distinct and one-directional:
+
+```
+WSL clone (~/workspace/sandbox/sdp-api)   ← develop, test locally
+   │  git push
+   ▼
+GitHub private repo (source of truth)
+   │  GitHub Actions
+   ▼
+VPS (deployed copy / running container)
+```
+
+Day-to-day loop for adding routes/forms later:
+
+```
+cd ~/workspace/sandbox/sdp-api
+# make changes in WSL, test locally
+git commit && git push        # → GitHub Actions deploys to the VPS
+```
+
+Deployment details:
 
 - The API runs as its own Docker Compose stack on the VPS (api + mysql), joined to
   Caddy's network — mirroring the platform's per-app pattern.
-- CI (GitHub Actions) typechecks/builds/tests on push. Deploy mechanism to be
-  finalized in the implementation plan (e.g. build image → registry → VPS pull, or
-  VPS git pull + `docker compose up -d --build`), using **GitHub Actions secrets**
-  for any credentials — none committed.
-- DB migrations run via Drizzle on deploy (e.g. a migrate step before app start).
+- CI (GitHub Actions) typechecks/builds/tests on push, then **deploys to the VPS**.
+  All credentials come from **GitHub Actions secrets**; none are committed. Exact
+  deploy mechanism (build image → registry → VPS pull, vs. VPS pull + compose build)
+  finalized in the implementation plan.
+- DB migrations run via Drizzle on deploy (a migrate step before app start).
 - The MySQL named volume is included in the VPS backup routine.
 - The website (this repo) is rebuilt and re-uploaded to Hostinger once it points at
   the API; no other Hostinger change.
@@ -251,5 +277,5 @@ Frontend (this repo, build-time, **public** values only):
 ## Open items for the implementation plan
 
 - Finalize the exact CI/CD deploy mechanism (registry vs. on-VPS build).
-- Confirm rate-limit thresholds and Turnstile widget appearance in the dark theme.
+- Confirm Turnstile widget appearance in the dark theme.
 - Decide the migration-run trigger (compose entrypoint vs. CI step).
