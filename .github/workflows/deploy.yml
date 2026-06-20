@@ -21,6 +21,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Gates — the deploy step only runs if these pass (steps fail-fast).
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Security audit (production deps, critical)
+        run: npm audit --omit=dev --audit-level=critical
+
       - name: Build site
         run: npm run build
         env:
