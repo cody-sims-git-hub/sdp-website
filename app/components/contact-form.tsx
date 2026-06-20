@@ -1,105 +1,126 @@
 import { useState } from "react";
-import { Send } from "lucide-react";
+import { Send, CheckCircle2 } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Label } from "~/components/ui/label";
 import { gtagEvent } from "~/lib/analytics";
+import { Turnstile } from "~/components/turnstile";
+import { contactConfig } from "~/lib/contact-config";
+import { submitContact } from "~/lib/contact-api";
 
 interface ContactFormProps {
-  /** Destination address for the composed message. */
+  /** Fallback address shown if the API submission fails. */
   email: string;
   className?: string;
 }
 
-export function ContactForm({ email, className }: ContactFormProps) {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
+type Status = "idle" | "submitting" | "success" | "error";
 
-  // No backend: compose a pre-filled email the visitor sends from their client.
-  // To collect submissions automatically instead, point this at a form service
-  // (e.g. Formspree) by setting <form action> and method="POST".
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    gtagEvent("contact_submit", { method: "contact_form" });
-    const subject = form.subject || `Message from ${form.name}`;
-    const body = `Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`;
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent(
-      subject,
-    )}&body=${encodeURIComponent(body)}`;
-  }
+export function ContactForm({ email, className }: ContactFormProps) {
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [token, setToken] = useState("");
+  const [website, setWebsite] = useState(""); // honeypot
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState("");
 
   function update(field: keyof typeof form) {
+    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!token) {
+      setError("Please complete the verification challenge.");
+      setStatus("error");
+      return;
+    }
+    setStatus("submitting");
+    setError("");
+    const result = await submitContact({
+      name: form.name,
+      email: form.email,
+      subject: form.subject,
+      message: form.message,
+      turnstileToken: token,
+      website,
+    });
+    if (result.ok) {
+      gtagEvent("contact_submit", { method: "contact_form" });
+      setStatus("success");
+    } else {
+      setError(result.message);
+      setStatus("error");
+    }
+  }
+
+  if (status === "success") {
     return (
-      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    ) => setForm((prev) => ({ ...prev, [field]: event.target.value }));
+      <div
+        className={cn(
+          "rounded-2xl border border-border bg-card/60 backdrop-blur-sm p-8 text-center",
+          className,
+        )}
+      >
+        <CheckCircle2 className="mx-auto size-10 text-primary" />
+        <h3 className="mt-4 text-lg font-medium text-foreground">Message sent</h3>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Thanks for reaching out — we've got your message and Cody will be in touch soon.
+        </p>
+      </div>
+    );
   }
 
   return (
     <form
       onSubmit={handleSubmit}
       className={cn(
-        "rounded-2xl border border-border bg-card/60 backdrop-blur-sm p-6 sm:p-8",
+        "relative rounded-2xl border border-border bg-card/60 backdrop-blur-sm p-6 sm:p-8",
         className,
       )}
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
-          <Input
-            id="name"
-            name="name"
-            required
-            value={form.name}
-            onChange={update("name")}
-            placeholder="Your name"
-          />
+          <Input id="name" name="name" required value={form.name} onChange={update("name")} placeholder="Your name" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            required
-            value={form.email}
-            onChange={update("email")}
-            placeholder="you@example.com"
-          />
+          <Input id="email" name="email" type="email" required value={form.email} onChange={update("email")} placeholder="you@example.com" />
         </div>
       </div>
 
       <div className="mt-5 space-y-2">
         <Label htmlFor="subject">Subject</Label>
-        <Input
-          id="subject"
-          name="subject"
-          value={form.subject}
-          onChange={update("subject")}
-          placeholder="What's this about?"
-        />
+        <Input id="subject" name="subject" value={form.subject} onChange={update("subject")} placeholder="What's this about?" />
       </div>
 
       <div className="mt-5 space-y-2">
         <Label htmlFor="message">Message</Label>
-        <Textarea
-          id="message"
-          name="message"
-          required
-          rows={6}
-          value={form.message}
-          onChange={update("message")}
-          placeholder="Share a bit about your project or why you're reaching out."
-        />
+        <Textarea id="message" name="message" required rows={6} value={form.message} onChange={update("message")} placeholder="Share a bit about your project or why you're reaching out." />
       </div>
 
-      <Button type="submit" size="lg" className="mt-6">
-        <Send className="size-4" /> Send message
+      {/* Honeypot: visually hidden, off-screen, not announced. Bots fill it. */}
+      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <label htmlFor="website">Website</label>
+        <input id="website" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
+      </div>
+
+      <Turnstile siteKey={contactConfig.turnstileSiteKey} onVerify={setToken} onExpire={() => setToken("")} />
+
+      {status === "error" && (
+        <p className="mt-4 text-sm text-red-400">
+          {error}{" "}
+          <a className="underline" href={`mailto:${email}`}>
+            Or email us directly.
+          </a>
+        </p>
+      )}
+
+      <Button type="submit" size="lg" className="mt-6" disabled={status === "submitting"}>
+        <Send className="size-4" /> {status === "submitting" ? "Sending…" : "Send message"}
       </Button>
     </form>
   );

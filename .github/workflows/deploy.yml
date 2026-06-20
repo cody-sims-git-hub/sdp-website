@@ -21,8 +21,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Gates — the deploy step only runs if these pass (steps fail-fast).
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Security audit (production deps, critical)
+        run: npm audit --omit=dev --audit-level=critical
+
       - name: Build site
         run: npm run build
+        env:
+          # Public build-time config for the contact form (baked into the client
+          # bundle). Set as repo Variables, not secrets — these are not sensitive.
+          VITE_CONTACT_API_URL: ${{ vars.VITE_CONTACT_API_URL }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
 
       - name: Deploy build to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
