@@ -8,3 +8,6 @@
 
 # Local-only working docs
 /.claude/canva-brand-kit.md
+
+# Subagent-driven dev scratch (ledger, briefs, review packages)
+.superpowers/
