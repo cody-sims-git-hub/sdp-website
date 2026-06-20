@@ -1446,8 +1446,9 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/drizzle ./drizzle
 USER node
 EXPOSE 3000
-# Run migrations, then start the server.
-CMD ["sh", "-c", "node dist/migrate.js && node dist/index.js"]
+# Migrations are an EXPLICIT deploy step (see deploy workflow) — NOT run on boot.
+# The image can still run migrations on demand via: `... node dist/migrate.js`.
+CMD ["node", "dist/index.js"]
 ```
 
 - [ ] **Step 3: Create docker-compose.yml**
@@ -1581,8 +1582,18 @@ jobs:
           echo "$KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/id_ed25519 "$USER@$HOST" \
-            "cd $DIR && git pull --ff-only && docker compose up -d --build && docker image prune -f"
+            "cd $DIR && git pull --ff-only \
+              && docker compose build \
+              && docker compose run --rm api node dist/migrate.js \
+              && docker compose up -d \
+              && docker image prune -f"
 ```
+
+The migration runs as its own explicit step (`docker compose run --rm api node
+dist/migrate.js`) — it starts the `db` dependency, waits for it to be healthy,
+applies pending Drizzle migrations, then exits. Only after it succeeds does
+`docker compose up -d` (re)start the app. A failed migration aborts the deploy
+before the new app version goes live.
 
 - [ ] **Step 2: Verify the workflow file is valid YAML**
 
@@ -1615,9 +1626,11 @@ Set each secret listed in Prerequisites via `gh secret set <NAME>` (or the repo 
 ```bash
 git clone <repo-url> "$VPS_DEPLOY_DIR" && cd "$VPS_DEPLOY_DIR"
 # create .env with real secrets (never committed)
-docker compose up -d --build
+docker compose build
+docker compose run --rm api node dist/migrate.js   # explicit migration step
+docker compose up -d
 docker compose ps        # api + db healthy
-docker compose logs api  # "migrations applied" then "sdp-api listening"
+docker compose logs api  # "sdp-api listening"
 ```
 
 - [ ] **Step 3: Add the Caddy block** — append to the Caddy config and reload:
@@ -2037,6 +2050,6 @@ git push
 ## Self-Review Notes (addressed)
 
 - **Spec coverage:** data flow (A10/A11), MySQL schema incl. status/source/ip/ua (A8), Resend notify+auto-reply with reply-to (A9), Turnstile (A6/B2), rate limit 5/10min (A7), CORS allowlist (A10), body cap (A10), honeypot (A5 + A10 + B3), max lengths + validation (A5), sanitized email output (A4/A9), least-priv DB user (A13 compose: app user, root separate; A16 reminder), secrets hygiene (.env.example only; A15 secrets), minimal /health (A10), non-root container + pinned base (A13), structured logging (A3 + route logs), Caddy block + DNS (A16), dev/deploy workflow (A14/A15), backups (volume noted; folded into A16 VPS routine), frontend states (B3) — all mapped.
-- **Open items resolved:** CI/CD mechanism = Tailscale SSH + on-VPS compose build (A15); migration trigger = container CMD runs `migrate.js` before server (A8/A13); Turnstile dark theme = `theme: "dark"` (B2).
+- **Open items resolved:** CI/CD mechanism = Tailscale SSH + on-VPS compose build (A15); migrations = **explicit deploy step** via `docker compose run --rm api node dist/migrate.js` before `up -d`, **not** on container boot (A13 CMD is `node dist/index.js` only; A15/A16); Turnstile dark theme = `theme: "dark"` (B2).
 - **Type consistency:** `ContactInput` (A5) → used in routes (A10); `NewSubmission` (A8) → `insertSubmission` (A8) → route (A10); `Mailer`/`SubmissionEmail` (A9) → route (A10); `submitContact`/`ContactRequest`/`ContactResult` (B1) → ContactForm (B3); `Turnstile` props (B2) → ContactForm (B3). Consistent.
 - **Known wiring caveat:** A10 Step 4's `db` stub shape must mirror `db.insert().values()` returning `[{ insertId }]`; flagged inline to fix the test stub (not production) until green.
