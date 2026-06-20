@@ -23,6 +23,11 @@ jobs:
 
       - name: Build site
         run: npm run build
+        env:
+          # Public build-time config for the contact form (baked into the client
+          # bundle). Set as repo Variables, not secrets — these are not sensitive.
+          VITE_CONTACT_API_URL: ${{ vars.VITE_CONTACT_API_URL }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
 
       - name: Deploy build to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
