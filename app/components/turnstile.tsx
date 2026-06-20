@@ -20,6 +20,7 @@ function ensureScript(): Promise<void> {
   return new Promise((resolve) => {
     const existing = document.querySelector(`script[src="${SCRIPT_SRC}"]`);
     if (existing) {
+      if (window.turnstile) { resolve(); return; }
       existing.addEventListener("load", () => resolve(), { once: true });
       return;
     }
@@ -42,6 +43,15 @@ export function Turnstile({ siteKey, onVerify, onExpire }: TurnstileProps) {
   const ref = useRef<HTMLDivElement>(null);
   const widgetId = useRef<string | null>(null);
 
+  // Keep refs in sync with the latest props so the mount effect can call them
+  // without being listed as a dependency (prevents widget teardown on re-render).
+  const onVerifyRef = useRef(onVerify);
+  const onExpireRef = useRef(onExpire);
+  useEffect(() => {
+    onVerifyRef.current = onVerify;
+    onExpireRef.current = onExpire;
+  });
+
   useEffect(() => {
     let cancelled = false;
     ensureScript().then(() => {
@@ -49,8 +59,8 @@ export function Turnstile({ siteKey, onVerify, onExpire }: TurnstileProps) {
       widgetId.current = window.turnstile.render(ref.current, {
         sitekey: siteKey,
         theme: "dark",
-        callback: (token: string) => onVerify(token),
-        "expired-callback": () => onExpire?.(),
+        callback: (token: string) => onVerifyRef.current(token),
+        "expired-callback": () => onExpireRef.current?.(),
       });
     });
     return () => {
@@ -60,7 +70,7 @@ export function Turnstile({ siteKey, onVerify, onExpire }: TurnstileProps) {
         widgetId.current = null;
       }
     };
-  }, [siteKey, onVerify, onExpire]);
+  }, [siteKey]);
 
-  return <div ref={ref} className="mt-2" />;
+  return <div ref={ref} className="mt-2 min-h-[65px]" />;
 }

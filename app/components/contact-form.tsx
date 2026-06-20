@@ -77,7 +77,7 @@ export function ContactForm({ email, className }: ContactFormProps) {
     <form
       onSubmit={handleSubmit}
       className={cn(
-        "rounded-2xl border border-border bg-card/60 backdrop-blur-sm p-6 sm:p-8",
+        "relative rounded-2xl border border-border bg-card/60 backdrop-blur-sm p-6 sm:p-8",
         className,
       )}
     >
