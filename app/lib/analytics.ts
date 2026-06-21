@@ -35,8 +35,15 @@ function classifyClick(href: string): string | null {
 
   if (/(^|\.)linkedin\.com$/i.test(host)) return "linkedin_click";
   if (/(^|\.)github\.com$/i.test(host)) return "github_click";
+  // Live project demos (currently the SimpleCRM demo subdomain) — a strong
+  // portfolio-credibility signal worth tracking alongside the GitHub links.
+  if (/(^|\.)demo\.simsdigitalpartners\.com$/i.test(host)) return "demo_click";
   if (path === "/resume.pdf") return "resume_download";
+  // Other PDFs are the résumé credential documents (diploma, certificates,
+  // promotion warrant). /resume.pdf is handled above as its own event.
+  if (/\.pdf$/i.test(path)) return "document_download";
   if (path === "/services") return "view_services";
+  if (/^\/services\/[^/]+$/.test(path)) return "view_service";
   if (path === "/contact") return "get_in_touch";
   return null;
 }

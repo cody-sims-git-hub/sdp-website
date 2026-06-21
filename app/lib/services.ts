@@ -71,14 +71,14 @@ export const services: Service[] = [
     process: ["Discovery & goals", "Design & content", "Build & review", "Launch & measure"],
   },
   {
-    slug: "ai-workflow-automation",
+    slug: "workflow-automation",
     icon: Workflow,
-    title: "AI & Workflow Automation",
+    title: "Workflow Automation",
     headline: "Reduce repetitive work with automation",
     description:
       "Automate manual processes, notifications, reporting, data entry, and business workflows so your team spends less time on repetitive tasks and more time on valuable work.",
     tags: ["Automation", "Integrations", "Workflows", "APIs", "Reporting"],
-    metaTitle: "AI & Workflow Automation Services | Sims Digital Partners",
+    metaTitle: "Workflow Automation Services | Sims Digital Partners",
     metaDescription:
       "Workflow automation services — automate repetitive tasks, reporting, notifications, and data entry to save your team time and reduce errors.",
     summary: [
