@@ -1,10 +1,10 @@
-import type { Route } from "./+types/services.ai-workflow-automation";
+import type { Route } from "./+types/services.workflow-automation";
 import { ServiceDetail } from "~/components/service-detail";
 import { getService } from "~/lib/services";
 import { siteMeta } from "~/lib/site-meta";
 import { serviceJsonLd } from "~/lib/structured-data";
 
-const service = getService("ai-workflow-automation")!;
+const service = getService("workflow-automation")!;
 
 export function meta({}: Route.MetaArgs) {
   return [

@@ -41,6 +41,7 @@ export default function Services() {
           <Link
             key={service.slug}
             to={`/services/${service.slug}`}
+            aria-label={`Service: ${service.title}`}
             className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card/60 p-6 backdrop-blur-sm transition-colors hover:border-primary/40 sm:p-8"
           >
             <div

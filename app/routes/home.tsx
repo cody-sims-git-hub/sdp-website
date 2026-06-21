@@ -60,6 +60,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 }
 
 function ServiceBlock({
+  slug,
   icon: Icon,
   title,
   headline,
@@ -68,7 +69,11 @@ function ServiceBlock({
   index,
 }: Service & { index: number }) {
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card/60 p-6 backdrop-blur-sm transition-colors hover:border-primary/40 sm:p-8">
+    <Link
+      to={`/services/${slug}`}
+      aria-label={`Service: ${title}`}
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card/60 p-6 backdrop-blur-sm transition-colors hover:border-primary/40 sm:p-8"
+    >
       <div
         aria-hidden
         className="absolute -top-16 left-1/3 h-40 w-40 rounded-full bg-primary/20 opacity-0 blur-3xl transition-opacity duration-300 group-hover:opacity-100"
@@ -93,18 +98,24 @@ function ServiceBlock({
         <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
           {description}
         </p>
-        <div className="mt-auto flex flex-wrap gap-2 border-t border-border pt-5">
-          {tags.map((t) => (
-            <span
-              key={t}
-              className="rounded-md bg-muted px-2 py-1 font-mono text-xs text-muted-foreground"
-            >
-              {t}
-            </span>
-          ))}
+        <div className="mt-auto border-t border-border pt-5">
+          <div className="flex flex-wrap gap-2">
+            {tags.map((t) => (
+              <span
+                key={t}
+                className="rounded-md bg-muted px-2 py-1 font-mono text-xs text-muted-foreground"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+          <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-primary">
+            Learn more
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

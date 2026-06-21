@@ -1,3 +1,8 @@
+# Legacy slug redirect: the "AI & Workflow Automation" service was renamed to
+# "Workflow Automation" and its slug shortened (2026-06). 301 so any indexed
+# URL or backlink to the old path lands on the new one.
+Redirect 301 /services/ai-workflow-automation /services/workflow-automation
+
 # Serve the branded 404 page for unknown URLs (direct hits the static host
 # resolves itself, before any client-side routing runs).
 ErrorDocument 404 /404.html

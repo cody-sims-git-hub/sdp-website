@@ -11,8 +11,8 @@ export default [
     route("services", "routes/services.tsx"),
     route("services/business-websites", "routes/services.business-websites.tsx"),
     route(
-      "services/ai-workflow-automation",
-      "routes/services.ai-workflow-automation.tsx",
+      "services/workflow-automation",
+      "routes/services.workflow-automation.tsx",
     ),
     route("services/ai-integration", "routes/services.ai-integration.tsx"),
     route("services/custom-software", "routes/services.custom-software.tsx"),
