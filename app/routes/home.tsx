@@ -164,7 +164,8 @@ export default function Home() {
               {[
                 "Websites & Online Presence",
                 "Business Automation",
-                "AI Integration & Workflows",
+                "AI Integration",
+                "Custom Web Applications",
               ].map((item) => (
                 <li
                   key={item}
