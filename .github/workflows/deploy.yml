@@ -1,62 +1,56 @@
 name: Deploy to Hostinger
-
 on:
   push:
     branches: [main]
-    # Docs-only pushes skip the build+deploy (README, markdown, docs/, license).
-    paths-ignore:
-      - "**.md"
-      - "docs/**"
-      - "LICENSE"
+    paths-ignore: ["**.md", "docs/**", "LICENSE"]
+  pull_request:
+    branches: [main]
+    paths-ignore: ["**.md", "docs/**", "LICENSE"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  # Lightweight gates — runs on PRs AND main pushes (no build here).
+  validate:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm audit --omit=dev --audit-level=critical
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      # Gates — the deploy step only runs if these pass (steps fail-fast).
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Security audit (production deps, critical)
-        run: npm audit --omit=dev --audit-level=critical
-
+  # Build + publish to Hostinger — main push ONLY, never PRs or branches.
+  deploy:
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
       - name: Build site
         run: npm run build
         env:
-          # Public build-time config for the contact form (baked into the client
-          # bundle). Set as repo Variables, not secrets — these are not sensitive.
+          # Public build-time config (baked into the client bundle). Repo
+          # Variables, not secrets — these are not sensitive.
           VITE_CONTACT_API_URL: ${{ vars.VITE_CONTACT_API_URL }}
           VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
-
       - name: Deploy build to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          # React Router v7 emits the static site to build/client (not dist/)
+          # React Router v7 emits the static site to build/client (not dist/).
           local-dir: ./build/client/
-          # simsdigitalpartners.com is served from its own domain folder, not
-          # the account's primary /public_html/. The FTP user is jailed to
-          # /home/u811108183, so this path targets the real docroot.
+          # simsdigitalpartners.com is served from its own domain folder; the FTP
+          # user is jailed to /home/u811108183, so this targets the real docroot.
           server-dir: /domains/simsdigitalpartners.com/public_html/
-          # No dangerous-clean-slate: the recursive pre-delete over FTP times
-          # out the control socket on a populated dir. The action's sync-state
-          # uploads only changed files instead.
-          # Fresh state-name forces a full re-publish of every file once, to
-          # recover from a stale/incorrect prior sync state.
+          # Sync-state upload (no clean-slate: recursive FTP pre-delete times out).
           state-name: .sdp-deploy-state.json
           timeout: 120000
