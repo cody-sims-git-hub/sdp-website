@@ -3,6 +3,11 @@ name: Deploy to Hostinger
 on:
   push:
     branches: [main]
+    # Docs-only pushes skip the build+deploy (README, markdown, docs/, license).
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "LICENSE"
 
 jobs:
   deploy:
