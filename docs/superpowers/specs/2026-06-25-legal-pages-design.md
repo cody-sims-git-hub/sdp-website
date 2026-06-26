@@ -11,8 +11,9 @@ site, with plain-language legal content tailored to what the site actually does.
 **Decisions (confirmed):**
 - Entity: **Sims Digital Partners LLC** ("we", "us", "our")
 - Governing law: **North Carolina**
-- Privacy scope: **US plain-language** — disclose the contact form, GA4 + Microsoft
-  Clarity analytics, cookies, and opt-out; **no cookie-consent banner**
+- Privacy scope: **US plain-language** — disclose the contact form, analytics,
+  cookies, and opt-out; **no cookie-consent banner**. Third-party providers are
+  described by **category, not named** (per preference)
 - Contact email: **info@simsdigitalpartners.com**
 - Effective / "Last updated": **June 25, 2026**
 
@@ -37,9 +38,11 @@ site, with plain-language legal content tailored to what the site actually does.
   `site-footer.tsx` (e.g. `© 2026 Sims Digital Partners. All rights reserved.
   · Privacy · Terms`). Each page also cross-links the other and `/contact`.
 - **Data accuracy:** contact-form fields confirmed in `app/lib/contact-api.ts` —
-  name, email, subject, message (+ Turnstile token, honeypot). Third parties:
-  Hostinger (hosting), Resend (email delivery), self-hosted API/MySQL on VPS,
-  Google Analytics 4, Microsoft Clarity, Cloudflare Turnstile.
+  name, email, subject, message (+ Turnstile token, honeypot). Actual providers (for
+  internal reference only — the **published policy describes these by category, not
+  by name**): Hostinger (hosting), Resend (email delivery), self-hosted API/MySQL on
+  VPS, Google Analytics 4 + Microsoft Clarity (analytics), Cloudflare Turnstile
+  (spam protection).
 
 ---
 
@@ -60,18 +63,17 @@ information you enter: your **name**, **email address**, **subject**, and the
 **message** you send. We use this to respond to your inquiry.
 
 _Information collected automatically._ When you visit the Site, certain information
-is collected automatically through analytics tools, including your IP address,
-browser and device type, operating system, referring website, the pages you view,
-and how you interact with the Site. We use **Google Analytics 4** (Google) and
-**Microsoft Clarity** (Microsoft) for this. Microsoft Clarity may also record
-session activity such as mouse movements, clicks, and scrolling to produce
-aggregated heatmaps and session replays that help us understand how the Site is
-used. These tools use cookies and similar technologies (see Section 5).
+is collected automatically through third-party analytics services, including your IP
+address, browser and device type, operating system, referring website, the pages you
+view, and how you interact with the Site. One of these services may also record
+aggregated session activity — such as mouse movements, clicks, and scrolling — to
+produce heatmaps and session replays that help us understand how the Site is used.
+These services use cookies and similar technologies (see Section 4).
 
-_Spam prevention._ Our contact form is protected by **Cloudflare Turnstile**, which
-helps verify that submissions come from real people. Cloudflare may process limited
-technical information (such as your IP address and browser signals) to provide this
-protection.
+_Spam prevention._ Our contact form is protected by a third-party spam-protection
+service, which helps verify that submissions come from real people. That service may
+process limited technical information (such as your IP address and browser signals)
+to provide this protection.
 
 **2. How we use information**
 
@@ -84,28 +86,23 @@ We use the information we collect to:
 **3. How information is shared**
 
 We do **not** sell your personal information. We share information only with
-service providers that help us operate the Site and respond to you, including:
-- **Hostinger** — website hosting;
-- **Resend** — delivery of contact-form emails;
-- our own application server and database, used to receive and store contact-form
-  submissions;
-- **Google** (Google Analytics 4) and **Microsoft** (Clarity) — analytics; and
-- **Cloudflare** — spam protection (Turnstile).
+service providers that help us operate the Site and respond to you — including our
+website hosting provider, our email-delivery service, our analytics providers, and
+our spam-protection service. Contact-form submissions are received and stored on our
+own application server and database.
 
 We may also disclose information if required by law or to protect our rights,
 safety, or property.
 
 **4. Cookies and analytics**
 
-The Site uses cookies and similar technologies, primarily through Google Analytics
-4 and Microsoft Clarity, to measure and improve how the Site performs. These are
-loaded on the production website.
+The Site uses cookies and similar technologies, primarily through our third-party
+analytics services, to measure and improve how the Site performs. These are loaded
+on the production website.
 
-You can control or disable cookies through your browser settings. You can opt out
-of Google Analytics across websites by installing the
-[Google Analytics Opt-out Browser Add-on](https://tools.google.com/dlpage/gaoptout).
-Disabling cookies may affect some Site functionality but will not prevent you from
-viewing the Site.
+You can control or disable cookies through your browser settings, and many analytics
+providers offer browser opt-out tools. Disabling cookies may affect some Site
+functionality but will not prevent you from viewing the Site.
 
 **5. Data retention**
 
