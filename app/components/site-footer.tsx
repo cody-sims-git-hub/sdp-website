@@ -102,8 +102,16 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-muted-foreground sm:px-6">
-          © {year} Sims Digital Partners. All rights reserved.
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-4 text-xs text-muted-foreground sm:px-6">
+          <span>© {year} Sims Digital Partners. All rights reserved.</span>
+          <nav className="flex items-center gap-x-5">
+            <Link to="/privacy" className={linkClass}>
+              Privacy
+            </Link>
+            <Link to="/terms" className={linkClass}>
+              Terms
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>
