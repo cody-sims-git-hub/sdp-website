@@ -41,7 +41,7 @@ Drive all of this through theme tokens (`bg-background`, `bg-card`, `text-foregr
 `Layout`, `Navbar`, `Footer`, `Hero`, `SectionHeader`, `ServiceCard`, `ProjectCard`, `CTA`, `ContactForm`.
 
 ### Constraints
-- **Static deployment to Hostinger** via uploading the production build — **no backend, no database, no authentication.** The build is configured for SSG (`ssr: true` + `prerender: true`) so `npm run build` emits fully static HTML under `build/client/`, which is uploaded directly. See the Commands section for the deployment details and the contact-form approach.
+- **Static deployment to Hostinger** via CI — **no backend, no database, no authentication.** The build is configured for SSG (`ssr: true` + `prerender: true`) so `npm run build` emits fully static HTML under `build/client/`, which GitHub Actions publishes to the host over SFTP. See the Commands section for the deployment details and the contact-form approach.
 - Stack: React Router v7 + TypeScript + Tailwind CSS + shadcn/ui where useful + `lucide-react` for icons (quiet, consistent, `h-4 w-4` / `h-5 w-5`).
 
 ## Commands
@@ -56,7 +56,9 @@ Drive all of this through theme tokens (`bg-background`, `bg-card`, `text-foregr
 - `npm run typecheck` — Runs `react-router typegen` then `tsc`. There is no lint or test setup; this is the only static-analysis gate.
 - Add shadcn components: `npx shadcn@latest add <name>` (works inside WSL; the `~` alias and `app/components/ui` path are already configured in `components.json`).
 
-**Deployment:** upload the contents of `build/client/` to Hostinger — nothing else. All routes are prerendered to real HTML files, so deep links work without rewrites. Adding a new page requires registering it in `app/routes.ts` so it gets prerendered (otherwise it won't have a static file and will 404 on direct navigation).
+**Deployment:** automated via GitHub Actions (`.github/workflows/deploy.yml`). A push to `main` runs the `validate` gate (`typecheck` + `npm audit`), then on `main` only builds and `rsync`s `build/client/` to the Hostinger docroot (`~/domains/simsdigitalpartners.com/public_html/`) over **SFTP/SSH** (port 65002, key in the `SSH_PRIVATE_KEY` repo secret) — plain FTP times out from CI. All routes are prerendered to real HTML files, so deep links work without rewrites. Adding a new page requires registering it in `app/routes.ts` so it gets prerendered (otherwise it won't have a static file and will 404 on direct navigation).
+
+> **Do NOT enable Hostinger's built-in Git integration** — it clones repo *source* into the docroot with no build step (no `index.html` → 403) and fights the Actions deploy. GitHub Actions is the only deployer. Note `paths-ignore` (`**.md`, `docs/**`, `LICENSE`): docs-only or empty commits won't trigger a deploy — force one with `gh run rerun <id>`. This flow is standardized for reuse across sites at `~/workspace/deploy-playbook/`.
 
 > **Why `ssr: true` for a static site:** with `ssr: false` (SPA mode), `prerender` only renders the *index* route's content — nested routes under the `layout()` come out as empty shells. `ssr: true` + `prerender: true` renders every route's full HTML at build time, which is what we want. There is no runtime server.
 
