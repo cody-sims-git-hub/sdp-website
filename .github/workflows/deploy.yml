@@ -40,17 +40,29 @@ jobs:
           # Variables, not secrets — these are not sensitive.
           VITE_CONTACT_API_URL: ${{ vars.VITE_CONTACT_API_URL }}
           VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
-      - name: Deploy build to Hostinger
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          # React Router v7 emits the static site to build/client (not dist/).
-          local-dir: ./build/client/
-          # simsdigitalpartners.com is served from its own domain folder; the FTP
-          # user is jailed to /home/u811108183, so this targets the real docroot.
-          server-dir: /domains/simsdigitalpartners.com/public_html/
-          # Sync-state upload (no clean-slate: recursive FTP pre-delete times out).
-          state-name: .sdp-deploy-state.json
-          timeout: 120000
+      # Publish over SFTP (SSH) rather than plain FTP/FTPS — Hostinger's FTP
+      # control socket times out intermittently from GitHub runners, whereas SSH
+      # on port 65002 is reliable. rsync --delete keeps the docroot an exact
+      # mirror of build/client (no stale-file accumulation, no sync-state file).
+      # Host/port/user are not secrets (visible in the hPanel); only the private
+      # key is sensitive, so it is the lone repo secret required: SSH_PRIVATE_KEY
+      # (the private half of the key registered under SSH Access → SSH keys).
+      - name: Deploy build to Hostinger over SFTP
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: "5.183.10.166"
+          SSH_PORT: "65002"
+          SSH_USER: "u811108183"
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          # build/client is the prerendered static site; mirror it into the docroot.
+          # --delete prunes removed files; exclude .well-known so any ACME/SSL
+          # challenge files the host manages are never wiped.
+          rsync -az --delete --exclude='.well-known/' \
+            -e "ssh -i ~/.ssh/deploy_key -p $SSH_PORT -o StrictHostKeyChecking=yes" \
+            ./build/client/ \
+            "$SSH_USER@$SSH_HOST:domains/simsdigitalpartners.com/public_html/"
