@@ -60,9 +60,10 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
           # build/client is the prerendered static site; mirror it into the docroot.
-          # --delete prunes removed files; exclude .well-known so any ACME/SSL
-          # challenge files the host manages are never wiped.
-          rsync -az --delete --exclude='.well-known/' \
+          # --delete prunes removed files; exclude .well-known so host-managed
+          # ACME/SSL files are never wiped, and preview-sites/ so client preview
+          # subdomains (public_html/preview-sites/<slug>) survive production deploys.
+          rsync -az --delete --exclude='.well-known/' --exclude='preview-sites/' \
             -e "ssh -i ~/.ssh/deploy_key -p $SSH_PORT -o StrictHostKeyChecking=yes" \
             ./build/client/ \
             "$SSH_USER@$SSH_HOST:domains/simsdigitalpartners.com/public_html/"
