@@ -71,7 +71,6 @@ function ServiceBlock({
   return (
     <Link
       to={`/services/${slug}`}
-      aria-label={`Service: ${title}`}
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card/60 p-6 backdrop-blur-sm transition-colors hover:border-primary/40 sm:p-8"
     >
       <div
@@ -84,7 +83,7 @@ function ServiceBlock({
             <Icon className="size-5" />
           </span>
           <div>
-            <span className="font-mono text-xs text-muted-foreground/70">
+            <span className="font-mono text-xs text-muted-foreground">
               {String(index).padStart(2, "0")}
             </span>
             <h3 className="text-lg font-semibold tracking-tight text-foreground">

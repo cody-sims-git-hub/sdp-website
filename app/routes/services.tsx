@@ -54,7 +54,7 @@ export default function Services() {
                   <service.icon className="size-5" />
                 </span>
                 <div>
-                  <span className="font-mono text-xs text-muted-foreground/70">
+                  <span className="font-mono text-xs text-muted-foreground">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <h2 className="text-lg font-semibold tracking-tight text-foreground">

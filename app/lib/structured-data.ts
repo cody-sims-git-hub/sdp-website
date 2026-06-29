@@ -1,4 +1,4 @@
-import type { Service } from "~/lib/services";
+import { services, type Service } from "~/lib/services";
 
 /**
  * schema.org JSON-LD builders. Each returns a plain object passed to a route's
@@ -13,9 +13,13 @@ const EMAIL = "info@simsdigitalpartners.com";
 const GITHUB = "https://github.com/cody-sims-git-hub";
 const LINKEDIN = "https://www.linkedin.com/in/cody-sims3/";
 
-/** Canonical Organization node, referenced by @id elsewhere. */
+/**
+ * Canonical Organization node, referenced by @id elsewhere. Typed as a
+ * ProfessionalService (a LocalBusiness subtype) so answer engines can classify
+ * what the studio does and enumerate its services from `hasOfferCatalog`.
+ */
 const organization = {
-  "@type": "Organization",
+  "@type": ["Organization", "ProfessionalService"],
   "@id": ORG_ID,
   name: NAME,
   url: `${SITE_URL}/`,
@@ -24,6 +28,9 @@ const organization = {
   email: EMAIL,
   description:
     "Sims Digital Partners builds websites, automation, AI integrations, and custom software to help businesses modernize operations.",
+  slogan:
+    "Practical websites, automation, and software that help small businesses get found and run better.",
+  areaServed: { "@type": "Country", name: "United States" },
   founder: { "@type": "Person", name: "Cody Sims" },
   knowsAbout: [
     "Web development",
@@ -32,6 +39,19 @@ const organization = {
     "Custom software development",
   ],
   sameAs: [GITHUB, LINKEDIN],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Services",
+    itemListElement: services.map((service) => ({
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: service.title,
+        description: service.metaDescription,
+        url: `${SITE_URL}/services/${service.slug}`,
+      },
+    })),
+  },
 };
 
 function breadcrumb(items: { name: string; path: string }[]) {
