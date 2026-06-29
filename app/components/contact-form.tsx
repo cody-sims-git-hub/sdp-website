@@ -18,20 +18,64 @@ interface ContactFormProps {
 
 type Status = "idle" | "submitting" | "success" | "error";
 
+type FieldErrors = Partial<Record<"name" | "email" | "message", string>>;
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Validate the required fields; returns a map of field → message for any that fail. */
+function validate(values: { name: string; email: string; message: string }): FieldErrors {
+  const errors: FieldErrors = {};
+  if (!values.name.trim()) errors.name = "Please enter your name.";
+  if (!values.email.trim()) errors.email = "Please enter your email address.";
+  else if (!EMAIL_RE.test(values.email.trim())) errors.email = "Please enter a valid email address.";
+  if (!values.message.trim()) errors.message = "Please enter a message.";
+  return errors;
+}
+
+/** Accessible required indicator: a visible `*` plus screen-reader-only text. */
+function RequiredMark() {
+  return (
+    <>
+      <span aria-hidden="true" className="text-primary">
+        *
+      </span>
+      <span className="sr-only">(required)</span>
+    </>
+  );
+}
+
 export function ContactForm({ email, className }: ContactFormProps) {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [token, setToken] = useState("");
   const [website, setWebsite] = useState(""); // honeypot
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   function update(field: keyof typeof form) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = e.target.value;
+      setForm((prev) => ({ ...prev, [field]: value }));
+      // Clear a field's error as soon as the user starts correcting it.
+      setFieldErrors((prev) => {
+        const key = field as keyof FieldErrors;
+        if (!prev[key]) return prev;
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+    };
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const errors = validate(form);
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      const first = (["name", "email", "message"] as const).find((f) => errors[f]);
+      if (first) document.getElementById(first)?.focus();
+      return;
+    }
     if (!token) {
       setError("Please complete the verification challenge.");
       setStatus("error");
@@ -76,6 +120,7 @@ export function ContactForm({ email, className }: ContactFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
+      noValidate
       className={cn(
         "relative rounded-2xl border border-border bg-card/60 backdrop-blur-sm p-6 sm:p-8",
         className,
@@ -83,12 +128,45 @@ export function ContactForm({ email, className }: ContactFormProps) {
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="name">Name</Label>
-          <Input id="name" name="name" required value={form.name} onChange={update("name")} placeholder="Your name" />
+          <Label htmlFor="name">
+            Name <RequiredMark />
+          </Label>
+          <Input
+            id="name"
+            name="name"
+            required
+            value={form.name}
+            onChange={update("name")}
+            placeholder="Your name"
+            aria-invalid={fieldErrors.name ? true : undefined}
+            aria-describedby={fieldErrors.name ? "name-error" : undefined}
+          />
+          {fieldErrors.name && (
+            <p id="name-error" className="text-sm text-destructive">
+              {fieldErrors.name}
+            </p>
+          )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" required value={form.email} onChange={update("email")} placeholder="you@example.com" />
+          <Label htmlFor="email">
+            Email <RequiredMark />
+          </Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            required
+            value={form.email}
+            onChange={update("email")}
+            placeholder="you@example.com"
+            aria-invalid={fieldErrors.email ? true : undefined}
+            aria-describedby={fieldErrors.email ? "email-error" : undefined}
+          />
+          {fieldErrors.email && (
+            <p id="email-error" className="text-sm text-destructive">
+              {fieldErrors.email}
+            </p>
+          )}
         </div>
       </div>
 
@@ -98,8 +176,25 @@ export function ContactForm({ email, className }: ContactFormProps) {
       </div>
 
       <div className="mt-5 space-y-2">
-        <Label htmlFor="message">Message</Label>
-        <Textarea id="message" name="message" required rows={6} value={form.message} onChange={update("message")} placeholder="Share a bit about your project or why you're reaching out." />
+        <Label htmlFor="message">
+          Message <RequiredMark />
+        </Label>
+        <Textarea
+          id="message"
+          name="message"
+          required
+          rows={6}
+          value={form.message}
+          onChange={update("message")}
+          placeholder="Share a bit about your project or why you're reaching out."
+          aria-invalid={fieldErrors.message ? true : undefined}
+          aria-describedby={fieldErrors.message ? "message-error" : undefined}
+        />
+        {fieldErrors.message && (
+          <p id="message-error" className="text-sm text-destructive">
+            {fieldErrors.message}
+          </p>
+        )}
       </div>
 
       {/* Honeypot: visually hidden, off-screen, not announced. Bots fill it. */}

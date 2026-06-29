@@ -93,6 +93,46 @@ export function ServiceDetail({ service }: { service: Service }) {
         </aside>
       </div>
 
+      {/* Built to grow — optional cross-sell to other services */}
+      {service.growth && service.growth.paths.length > 0 && (
+        <section className="mt-16">
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">
+            {service.growth.title}
+          </h2>
+          <p className="mt-3 max-w-3xl text-base leading-relaxed text-muted-foreground">
+            {service.growth.intro}
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {service.growth.paths.map((path) => {
+              const target = services.find((s) => s.slug === path.slug);
+              const Icon = target?.icon;
+              return (
+                <Link
+                  key={path.slug}
+                  to={`/services/${path.slug}`}
+                  data-analytics-event="growth_path_click"
+                  className="group rounded-2xl border border-border bg-card/60 p-6 backdrop-blur-sm transition-colors hover:border-primary/40"
+                >
+                  {Icon && (
+                    <span className="grid size-10 place-items-center rounded-lg bg-primary/15 text-primary ring-1 ring-primary/30">
+                      <Icon className="size-5" />
+                    </span>
+                  )}
+                  <h3 className="mt-4 font-medium text-foreground">{path.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                    {path.description}
+                  </p>
+                  <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary">
+                    {target ? `Explore ${target.title}` : "Learn more"}
+                    <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       {/* CTA */}
       <section className="mt-16">
         <div className="relative overflow-hidden rounded-2xl border border-border bg-card/60 px-6 py-12 text-center backdrop-blur-sm sm:px-12">
