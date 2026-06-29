@@ -65,7 +65,10 @@ export function initClickTracking(): () => void {
     if (!el) return;
 
     const href = el.getAttribute("href") || "";
-    const name = classifyClick(href);
+    // An element can opt into an explicit event name via `data-analytics-event`
+    // (e.g. the "Built to grow" cross-sell cards), overriding href classification
+    // so a meaningful click isn't lumped into a generic event like view_service.
+    const name = el.getAttribute("data-analytics-event") || classifyClick(href);
     if (!name) return;
 
     const label =

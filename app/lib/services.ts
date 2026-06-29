@@ -6,6 +6,20 @@ export interface ServiceFeature {
   description: string;
 }
 
+/** A "where this can grow" path that cross-links to another service. */
+export interface ServiceGrowthPath {
+  /** Slug of the service this path points to. */
+  slug: string;
+  title: string;
+  description: string;
+}
+
+export interface ServiceGrowth {
+  title: string;
+  intro: string;
+  paths: ServiceGrowthPath[];
+}
+
 export interface Service {
   /** URL slug — the detail page lives at /services/<slug>. */
   slug: string;
@@ -28,6 +42,8 @@ export interface Service {
   features: ServiceFeature[];
   /** Optional high-level process steps. */
   process?: string[];
+  /** Optional "where this can grow" section that cross-links to other services. */
+  growth?: ServiceGrowth;
 }
 
 export const services: Service[] = [
@@ -35,40 +51,60 @@ export const services: Service[] = [
     slug: "business-websites",
     icon: Globe,
     title: "Business Websites",
-    headline: "Websites that help businesses get found and get contacted",
+    headline:
+      "A professional website that helps customers find you, see who you are, and get in touch.",
     description:
-      "Modern, fast-loading websites built for credibility, search visibility, and lead generation. From simple business sites to custom web applications, designed to work across desktop and mobile.",
-    tags: ["Next.js", "React", "SEO", "Analytics", "Hosting", "Forms"],
-    metaTitle: "Business Website Design & Development | Sims Digital Partners",
+      "A clean, fast website that introduces your business, helps people find you online, and makes it easy to get in touch — the foundation you can build on as you grow.",
+    tags: ["Responsive", "SEO", "AI Discoverability", "Fast Loading", "Contact Forms", "Hosting"],
+    metaTitle: "Business Website Design | Sims Digital Partners",
     metaDescription:
-      "Custom business websites built for speed, search visibility, and lead generation — responsive, modern sites and web applications for small businesses.",
+      "A professional brochure website that helps customers find you on search and AI assistants, see who you are, and get in touch — fast, modern, and built to grow.",
     summary: [
-      "Your website is often the first impression a potential customer has of your business. We build fast, modern websites that load quickly, look professional on every device, and are structured to help people find you and get in touch.",
-      "Whether you need a straightforward marketing site or a more involved web application, the focus is on clean design, solid performance, and the technical fundamentals — accessibility, SEO, and analytics — that help a site actually do its job.",
+      "Think of this as your business's home online — a polished site whose job is to help people find you, understand what you do, and reach you without friction. It loads fast, looks right on every phone and laptop, and is built so search engines and AI assistants can read it and point customers your way.",
+      "A site like this is often called a brochure site: it introduces your business and sends inquiries straight to you — messages land right in your inbox, or in a CRM you already use, with no new system to log into. When you're ready to do more — take bookings, sell online, or automate the follow-up — that's where a website grows into a web application, and that can be built for you too.",
     ],
     features: [
       {
-        title: "Modern, responsive design",
+        title: "Fast, on every device",
         description:
-          "Clean layouts that work across desktop, tablet, and mobile, built to reflect your brand and earn trust.",
+          "Pages load quickly and look professional on phones, tablets, and computers — a strong first impression every time.",
       },
       {
-        title: "Built for search & speed",
+        title: "Easy to find online",
         description:
-          "Fast load times, semantic markup, and on-page SEO so your site is easy to find and pleasant to use.",
+          "Structured for search so customers looking for what you offer can actually find you, with the on-page SEO fundamentals handled.",
       },
       {
-        title: "Lead capture",
+        title: "Ready for AI search",
         description:
-          "Contact forms, scheduling, and clear calls to action that turn visitors into conversations.",
+          "Most sites still only do SEO. But customers are shifting from Google to AI assistants like ChatGPT — your site is built to be discoverable there too, so you get recommended where competitors aren't.",
       },
       {
-        title: "Analytics & hosting",
+        title: "Inquiries straight to you",
         description:
-          "Analytics setup to understand your traffic, plus guidance on reliable, low-maintenance hosting.",
+          "A contact form that sends messages right to your inbox — or the CRM you already use. No database, no new system to manage; people just reach you.",
       },
     ],
     process: ["Discovery & goals", "Design & content", "Build & review", "Launch & measure"],
+    growth: {
+      title: "Built to grow with you",
+      intro:
+        "A brochure site gets you found and tells your story. When you're ready to do more than introduce yourself, the same foundation can grow into a web application built around how you work.",
+      paths: [
+        {
+          slug: "workflow-automation",
+          title: "Automate the follow-up",
+          description:
+            "Automatic email replies, appointment reminders, and routine messages that go out on their own — so customers hear back even when you're busy.",
+        },
+        {
+          slug: "custom-software",
+          title: "Add a portal or store",
+          description:
+            "An online store, customer logins, or an internal portal for your team — the features that turn a website into an application built around your business.",
+        },
+      ],
+    },
   },
   {
     slug: "workflow-automation",
@@ -76,14 +112,14 @@ export const services: Service[] = [
     title: "Workflow Automation",
     headline: "Reduce repetitive work with automation",
     description:
-      "Automate manual processes, notifications, reporting, data entry, and business workflows so your team spends less time on repetitive tasks and more time on valuable work.",
-    tags: ["Automation", "Integrations", "Workflows", "APIs", "Reporting"],
-    metaTitle: "Workflow Automation Services | Sims Digital Partners",
+      "Automate manual processes, notifications, reporting, and data entry, set up online booking, and connect the tools you already use — so your team spends less time on repetitive tasks and more on valuable work.",
+    tags: ["Automation", "Integrations", "Online Booking", "Workflows", "Reporting"],
+    metaTitle: "Workflow Automation & Integration | Sims Digital Partners",
     metaDescription:
-      "Workflow automation services — automate repetitive tasks, reporting, notifications, and data entry to save your team time and reduce errors.",
+      "Workflow automation and integration services — set up online booking, automate reminders, reporting, notifications, and data entry, and connect the tools your team already uses.",
     summary: [
       "Most teams lose hours every week to repetitive, manual work — copying data between tools, sending the same updates, compiling the same reports. Automation handles that work reliably in the background.",
-      "We map out the processes that slow your team down and build automations that connect your existing tools, move data cleanly, and run consistently — so people can spend their time on the work that actually needs them.",
+      "We map out the processes that slow your team down and connect the tools you already use — booking, email, spreadsheets, and CRM systems — so data moves cleanly and runs consistently. That includes setting up online booking so customers can schedule themselves, with the reminders and follow-ups handled automatically.",
     ],
     features: [
       {
@@ -92,19 +128,19 @@ export const services: Service[] = [
           "Replace manual, repetitive steps with automated workflows that run reliably and consistently.",
       },
       {
-        title: "Tool integrations",
+        title: "Online booking & scheduling",
         description:
-          "Connect the apps and services you already use so data flows between them without manual handoffs.",
+          "Set up booking tools like Calendly or Google and Microsoft Bookings so customers can schedule themselves — then automate the confirmations, reminders, and follow-ups so fewer slip through and no-shows drop.",
+      },
+      {
+        title: "Tool integrations & syncing",
+        description:
+          "Connect the apps and services you already use so data flows between them automatically — kept accurate and in sync across systems, without manual handoffs or copy-and-paste.",
       },
       {
         title: "Reporting & notifications",
         description:
           "Automatic reports, alerts, and updates delivered where your team already works.",
-      },
-      {
-        title: "Data entry & syncing",
-        description:
-          "Keep records accurate and up to date across systems without copy-and-paste.",
       },
     ],
     process: ["Map the workflow", "Identify what to automate", "Build & test", "Monitor & refine"],
@@ -152,40 +188,60 @@ export const services: Service[] = [
     slug: "custom-software",
     icon: AppWindow,
     title: "Custom Software & Applications",
-    headline: "Software built around your process",
+    headline:
+      "Web applications built around how your business actually works — portals, stores, dashboards, and the operations behind them.",
     description:
-      "When spreadsheets and off-the-shelf software no longer fit, custom applications can streamline operations, centralize data, and support the way your business actually works.",
-    tags: ["Web Apps", "Databases", "Dashboards", "APIs", "CRM Systems"],
-    metaTitle: "Custom Software & Web App Development | Sims Digital Partners",
+      "When spreadsheets and off-the-shelf tools no longer keep up, a custom web application puts your store, portals, records, and daily operations in one system — built around how your business actually works.",
+    tags: ["Customer Portals", "Online Stores", "Stripe", "Dashboards", "Databases", "CRM"],
+    metaTitle: "Custom Web Application Development | Sims Digital Partners",
     metaDescription:
-      "Custom software and web application development — bespoke apps, dashboards, databases, and CRM tools built around how your business actually works.",
+      "Custom web applications built around your business — customer and employee portals, online stores with Stripe payments, internal tools, dashboards, and CRM systems that replace the spreadsheet patchwork.",
     summary: [
-      "When spreadsheets and off-the-shelf tools stop keeping up, custom software can fit your process exactly — centralizing data, removing workarounds, and supporting the way your team actually works.",
-      "We build web applications, internal tools, dashboards, and database-backed systems end to end — from data model to interface — with a focus on something reliable and maintainable that you can grow into.",
+      "Most businesses start with a patchwork — a spreadsheet here, an off-the-shelf tool there, a few manual steps holding it together. It works until it doesn't: information lives in too many places, the same data gets entered twice, and the workarounds start costing real time.",
+      "A custom web application replaces that patchwork with one system built around how you actually work. This is the step beyond a brochure site — where a website stops just showing information and starts doing things: giving customers a place to log in, selling your products, or giving your team a dashboard to run the day. It's built around your process, not a template you bend to fit.",
     ],
     features: [
       {
-        title: "Web applications",
+        title: "Customer & employee portals",
         description:
-          "Custom apps and internal tools built around your specific workflow, not a generic template.",
+          "A secure place for customers to log in and manage their account, or for your team to access the tools and information they need to do their work.",
       },
       {
-        title: "Databases & data models",
+        title: "Online store with Stripe payments",
         description:
-          "Well-structured data so information stays consistent, queryable, and trustworthy.",
+          "A storefront where you manage your products and customers check out securely — Stripe handles the payments and card data, so the sensitive part isn't yours to worry about.",
       },
       {
-        title: "Dashboards & reporting",
+        title: "Internal tools & operations",
         description:
-          "Clear views into your data so you can see what's happening and make decisions.",
+          "Replace the spreadsheet-and-sticky-note patchwork with one system that fits your process, so data is entered once and the day-to-day runs in one place.",
       },
       {
-        title: "CRM & business tools",
+        title: "Dashboards & records",
         description:
-          "Lead tracking, records, and process tools tailored to how you operate.",
+          "Your information centralized and organized — records, reporting, and clear views into what's happening so you can make decisions with confidence.",
       },
     ],
     process: ["Understand the process", "Design the system", "Build iteratively", "Launch & support"],
+    growth: {
+      title: "Built to grow with you",
+      intro:
+        "Once your application is in place, it's a foundation you can keep building on. Two of the most common additions:",
+      paths: [
+        {
+          slug: "workflow-automation",
+          title: "Automate the busywork",
+          description:
+            "Reminders, follow-up emails, online booking, and routine updates that happen on their own — so the system keeps things moving without anyone lifting a finger.",
+        },
+        {
+          slug: "ai-integration",
+          title: "Add an AI assistant",
+          description:
+            "A chatbot that helps visitors find what they need, answer common questions, or book an appointment right inside your site — guided, in plain language.",
+        },
+      ],
+    },
   },
 ];
 
