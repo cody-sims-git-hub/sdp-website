@@ -1,0 +1,20 @@
+# Sims Digital Partners
+
+> Sims Digital Partners is a one-person studio led by Cody Sims that builds practical websites, workflow automation, AI integrations, and custom web applications for small businesses — helping them get found online, look credible, and run more efficiently.
+
+Sims Digital Partners helps small businesses across four services, in increasing order of complexity: a professional brochure website to get found and get contacted; workflow automation and integrations (including online booking) to remove repetitive work; AI integrations like assistants and chatbots; and custom web applications (customer and employee portals, online stores with Stripe, internal tools, dashboards) for when off-the-shelf tools no longer fit. It is a small studio, not a large agency — business-first, but built on a credible developer background.
+
+## Services
+- [Business Websites](https://simsdigitalpartners.com/services/business-websites): Fast, professional brochure websites built to be found on search engines and AI assistants, show customers who you are, and make it easy to get in touch. The contact form delivers inquiries straight to your inbox or an existing CRM — no database to manage.
+- [Workflow Automation](https://simsdigitalpartners.com/services/workflow-automation): Automate repetitive work, reporting, and notifications; set up online booking with tools like Calendly or Google and Microsoft Bookings; and connect the apps you already use so data stays in sync.
+- [AI Integration](https://simsdigitalpartners.com/services/ai-integration): Add AI assistants, chatbots, and document search (retrieval-augmented generation) into existing systems, grounded in your own data so answers stay relevant.
+- [Custom Software & Applications](https://simsdigitalpartners.com/services/custom-software): Custom web applications built around your process — customer and employee portals, online stores with Stripe handling payments, internal operational tools, dashboards, and CRM systems. The step beyond a brochure site, for when a website needs to do things, not just show them.
+
+## About
+- [About Cody Sims](https://simsdigitalpartners.com/about): Background on Cody Sims, the developer behind Sims Digital Partners.
+- [Resume](https://simsdigitalpartners.com/resume): Professional experience, skills, and credentials.
+- [Contact](https://simsdigitalpartners.com/contact): Start a conversation about a project.
+
+## Policies
+- [Privacy Policy](https://simsdigitalpartners.com/privacy)
+- [Terms of Service](https://simsdigitalpartners.com/terms)
